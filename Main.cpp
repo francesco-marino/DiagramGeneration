@@ -4,6 +4,7 @@
 #include "AdjacencyMatrix.h"
 #include "DataStructures.h"
 #include "DiagramManager.h"
+#include "MbptDiagramManager.h"
 #include "Vertex.h"
 
 using namespace std;
@@ -22,8 +23,8 @@ int main() {
     cout << "Total matrices generated: " << adj_matrices.size() << "\n";
 
 
-    // Now test the MbptDiagramsManager class
-    MbptDiagramsManager manager;
+    // Now test the MbptDiagramManager class
+    MbptDiagramManager manager;
     manager.GenerateDiagrams(4, 2);
     // manager.PrintMatrices();
 
@@ -33,14 +34,36 @@ int main() {
             cout << val << " ";
         }
         cout << "\n";
-        MbptDiagramsManager filtered_manager = manager.SelectBySkeletonStructure(skeleton);
+        MbptDiagramManager filtered_manager = manager.SelectBySkeletonStructure(skeleton);
         cout << "Number of diagrams with this structure: " << filtered_manager.GetAdjacencyMatrices().size() << "\n\n";
         //filtered_manager.PrintMatrices();
     }
     */
 
-    DiagramManager diagram;
-    diagram.Test(6);
+    MbptDiagramManager diagram;
+    //diagram.Test(4);
+
+    MbptDiagramManager mbpt_w3;
+    mbpt_w3.AddVertex( Vertex(3,3) );
+    mbpt_w3.AddVertex( Vertex(3,3) );
+    mbpt_w3.Build();
+    mbpt_w3.Print();
+
+    MbptDiagramManager cc_t2;
+    cc_t2.AddVertex( Vertex(2,2,false,"T2") );
+    cc_t2.AddVertex( Vertex(2,2,false,"T2") );
+    cc_t2.AddVertex( Vertex(2,2,false,"H") );
+    cc_t2.AddVertex( Vertex(2,2,true,"Ext") );
+    cc_t2.Build(true);
+    cc_t2.Print();
+
+    cout << "\n\n\n";
+    MbptDiagramManager eom;
+    eom.AddVertex( Vertex(2,2,true,"D") );
+    eom.AddVertex( Vertex(1,1,false,"R") );
+    eom.AddVertex( Vertex(1,1,false,"H") );
+    eom.Build(false);
+    eom.Print();
 
     return 0;
 }

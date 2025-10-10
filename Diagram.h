@@ -25,6 +25,7 @@ class Diagram {
         bool IsConnected() const { return is_connected; }
 
         void PrintMat() const { adjacency_matrix.print(); }
+        void Print() const;
 
     protected:
 
@@ -35,7 +36,8 @@ class Diagram {
 
         void ProcessMatrix(); // Processes the adjacency matrix to determine connectivity and other properties
         void GetConnectivity() ; // Determines if the diagram is connected
-        vector<int> GetSkeletonStructure() const = 0; // Placeholder for skeleton structure extraction
+        virtual bool GetConnectivity(const IntMat &adj)  ;
+        // virtual vector<int> GetSkeletonStructure() const ; // Placeholder for skeleton structure extraction
 
     private:
 

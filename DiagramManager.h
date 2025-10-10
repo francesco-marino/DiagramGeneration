@@ -1,6 +1,7 @@
 #pragma once
 
 #include <armadillo>
+#include <memory>
 #include <vector>
 
 #include "DataStructures.h"
@@ -9,7 +10,7 @@
 
 using std::vector; 
 
-class DiagramManager{
+class DiagramManager {
 
     public:
 
@@ -18,9 +19,10 @@ class DiagramManager{
         ~DiagramManager() { Cleanup(); }
 
         void AddVertex(const Vertex& vertex);
-        void Build();
+        void Build(bool only_connected=false);
 
         void PrintMatrices() const;
+        void Print() const;
 
         vector<IntMat> GetAdjacencyMatrices() const { return adjacency_matrices; }
         vector<Diagram> GetDiagrams() const { return diagrams; }
@@ -36,9 +38,12 @@ class DiagramManager{
 
         void AssignVertices(const vector<Vertex>& vertices_in) { vertices = vertices_in; }
 
-    private:
+        // Factory method to create Diagram instances
+        virtual std::unique_ptr<Diagram> CreateDiagram(const IntMat& mat) const = 0;
+
         void Cleanup();
-        void GenerateAdjacencyMatrix();
+        void GenerateAdjacencyMatrix(bool only_connected=false);
         void GenerateDiagramsFromMatrices(const vector<IntMat>& matrices);
-        void PrintMat(const IntMat& mat) const { mat.print(); }
+
+     private:
 };

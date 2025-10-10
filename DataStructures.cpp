@@ -1,5 +1,6 @@
 #include <functional>
 #include <iostream>
+#include <queue>
 #include <vector>
 
 using std::vector;
@@ -60,3 +61,32 @@ vector<int> select_by_condition(const vector<vector<int>>& sequences, const vect
     return indecesFiletered;
 }
 
+// Check if an adjacency matrix represents a connected (undirected) graph
+bool is_connected(const std::vector<std::vector<int>>& adj) {
+    int n = adj.size();
+    if (n == 0) return true; // empty graph is trivially connected
+
+    std::vector<bool> visited(n, false);
+    std::queue<int> q;
+
+    // Start BFS from node 0
+    visited[0] = true;
+    q.push(0);
+
+    while (!q.empty()) {
+        int v = q.front();
+        q.pop();
+        for (int u = 0; u < n; ++u) {
+            if (adj[v][u] && !visited[u]) {
+                visited[u] = true;
+                q.push(u);
+            }
+        }
+    }
+
+    // Check if all vertices were visited
+    for (bool v : visited)
+        if (!v) return false;
+
+    return true;
+}

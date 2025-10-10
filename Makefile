@@ -1,6 +1,6 @@
 EXE=Main
 
-OLEVEL= -O3 	
+OLEVEL= -g -O0 -debug all -traceback 	
 ARCH= -mavx2 -march=core-avx2 -mtune=core-avx2
 
 CXX=mpiicpc
@@ -18,7 +18,7 @@ FFLAGS_ALL=   ${FFLAGS}   ${OLEVEL} $(DEBUG_FF)  ${ARCH}
 CXXFLAGS_ALL= ${CXXFLAGS} ${OLEVEL} $(DEBUG_CXX) ${ARCH} ${ARMA_FLAGS} -DUSE_COMPLEX
 
 fortran_objects = 
-cpp_objects = Main.o DataStructures.o AdjacencyMatrix.o Vertex.o DiagramManager.o Diagram.o
+cpp_objects = Main.o DataStructures.o AdjacencyMatrix.o Vertex.o DiagramManager.o Diagram.o MbptDiagramManager.o
 
 %.o: %.f
 	$(FC) $(FFLAGS_ALL) -c $<
@@ -35,7 +35,9 @@ all: Exe
 Exe: $(fortran_objects) $(cpp_objects)
 	$(CXX) $(CXXFLAGS_ALL) -o $(EXE).exe $(fortran_objects) $(cpp_objects) $(LINK)
 
-Main.o: Main.cpp AdjacencyMatrix.o DataStructures.o DiagramManager.o
+Main.o: Main.cpp AdjacencyMatrix.o DataStructures.o DiagramManager.o MbptDiagramManager.o
+
+MbptDiagramManager.o: MbptDiagramManager.cpp DiagramManager.o Diagram.o Vertex.o
 
 DiagramManager.o: DiagramManager.cpp Diagram.o Vertex.o
 
