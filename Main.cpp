@@ -3,57 +3,51 @@
 
 #include "AdjacencyMatrix.h"
 #include "CoupledClusterDiagramManager.h"
+#include "CoupledClusterVertex.h"
 #include "DataStructures.h"
 #include "DiagramManager.h"
 #include "MbptDiagramManager.h"
+#include "Parallel.h"
 #include "Vertex.h"
 
 using namespace std;
 
 
 int main() {
+
+    int ntasks, rank;
+    Initialize();
+    GetRank(ntasks, rank);
     
-    /*
-    // Test adjacency matrix generation
-    cout << "\nAdjacency matrices of size 4 with sum 2:\n";
-    auto adj_matrices = generate_adjacency_matrices(4, 2);
-    for (const auto& mat : adj_matrices) {
-        mat.print();
-        cout << "\n";
-    }
-    cout << "Total matrices generated: " << adj_matrices.size() << "\n";
-
-
-    // Now test the MbptDiagramManager class
-    MbptDiagramManager manager;
-    manager.GenerateDiagrams(4, 2);
-    // manager.PrintMatrices();
-
-    for (auto skeleton : manager.GetUniqueSkeletonStructures() ) {
-        cout << "Skeleton structure: ";
-        for (auto val : skeleton) {
-            cout << val << " ";
-        }
-        cout << "\n";
-        MbptDiagramManager filtered_manager = manager.SelectBySkeletonStructure(skeleton);
-        cout << "Number of diagrams with this structure: " << filtered_manager.GetAdjacencyMatrices().size() << "\n\n";
-        //filtered_manager.PrintMatrices();
-    }
-    */
-
     MbptDiagramManager diagram;
-    //diagram.Test(4);
+    //diagram.Test(4, false);
+    //cout << "Number of diagrams generated: " << diagram.GetNumberOfDiagrams() << "\n\n";
 
     MbptDiagramManager mbpt_w3;
     mbpt_w3.AddVertex( Vertex(3,3) );
     mbpt_w3.AddVertex( Vertex(3,3) );
     mbpt_w3.Build();
-    mbpt_w3.Print();
+    //mbpt_w3.Print();
+
+    CoupledClusterDiagramManager cc_0;
+    cc_0.AddVertex( T2Vertex() );
+    cc_0.AddVertex( V2bVertex() );
+    cc_0.Build();
+    cc_0.Print();
+
+    cc_0.Reset();
+    cc_0.AddVertex( T1Vertex() );
+    cc_0.AddVertex( T1Vertex() );
+    cc_0.AddVertex( V2bVertex() );
+    cc_0.Build();
+    //cout << "HEY HEY HEY   " << cc_0.GetDiagram(0)->GetAdjacencyMatrix() << "\n";
+    cc_0.Print();
+    //cout << cc_0.GetDiagram(0)->HasHVertex();
 
     CoupledClusterDiagramManager cc_t2;
-    cc_t2.AddVertex( Vertex(2,2,false,"T2") );
-    cc_t2.AddVertex( Vertex(2,2,false,"T2") );
-    cc_t2.AddVertex( Vertex(2,2,false,"H",true) );
+    cc_t2.AddVertex( T2Vertex() );
+    cc_t2.AddVertex( T2Vertex() );
+    cc_t2.AddVertex( V2bVertex() );
     cc_t2.AddVertex( Vertex(2,2,true,"Ext") );
     cc_t2.Build(true);
     cc_t2.Print();
@@ -63,9 +57,10 @@ int main() {
     eom.AddVertex( Vertex(2,2,true,"D") );
     eom.AddVertex( Vertex(1,1,false,"R") );
     eom.AddVertex( Vertex(2,2,false,"H") );
-    eom.Build(false);
+    //eom.Build(false);
     //eom.Print();
 
+    Finalize();
     return 0;
 }
 

@@ -18,4 +18,5 @@ class CoupledClusterDiagram : public Diagram {
         bool GetConnectivity(const IntMat &adj) override ;
         vector<int> FindSkeletonStructure(const IntMat& mat) const override; // Implements skeleton structure extraction for CC diagrams
 
+        // vector< vector<int> > FindEquivalentVertices(const vector< unique_ptr<Vertex> >& vertices_in) override { return Diagram::FindEquivalentVertices(vertices_in); }
 };

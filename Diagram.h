@@ -35,6 +35,8 @@ class Diagram {
         void SetVertices(const vector<Vertex>& vertices_in);
         const vector< unique_ptr<Vertex> >& GetVertices() const { return vertices; }
 
+        bool HasHVertex() const { return has_Hvertex; }
+        bool HasVirtualVertex() const { return has_virtual_vertex; }
         bool IsConnected() const { return is_connected; }
         bool IsBuilt() const { return built; }
         vector<int> GetSkeletonStructure() const { return skeleton_structure; }
@@ -43,7 +45,7 @@ class Diagram {
         string GetType() const { return type; }
 
         void PrintMat() const { adjacency_matrix.print(); }
-        void Print() const;
+        virtual void Print() const;
 
         virtual void Cleanup() ;
 
@@ -52,10 +54,15 @@ class Diagram {
         vector< unique_ptr<Vertex> > vertices;
         IntMat adjacency_matrix;
         vector<int> skeleton_structure;
+
+        vector< vector<int> > equivalent_vertices;
         
         bool is_connected;
         bool has_virtual_vertex;
         bool has_Hvertex;
+
+        int pos_Hvertex;
+        int pos_virtual_vertex;
         
         string type;
         bool built;
@@ -66,6 +73,8 @@ class Diagram {
 
         void FindSkeletonStructure() { skeleton_structure = FindSkeletonStructure(adjacency_matrix);  }
         virtual vector<int> FindSkeletonStructure(const IntMat& mat) const { return {13,12}; }; // Placeholder for skeleton structure extraction
+
+        //virtual vector< vector<int> > FindEquivalentVertices(const vector< unique_ptr<Vertex> >& vertices_in); // Placeholder for finding equivalent vertices
 
     private:
         void BuildFromAdjacencyMatrix(const IntMat& mat);

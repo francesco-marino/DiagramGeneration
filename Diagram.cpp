@@ -31,6 +31,8 @@ void Diagram::Cleanup() {
     is_connected = false;
     has_virtual_vertex = false;
     has_Hvertex = false;
+    pos_Hvertex = -1;
+    pos_virtual_vertex = -1;
     built = false;
     skeleton_structure.clear();
     type = "Generic";

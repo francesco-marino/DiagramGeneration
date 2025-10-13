@@ -15,14 +15,16 @@ void CoupledClusterDiagram::CheckVertices() {
 
         if (vertices[i]->IsVirtual()) {
             n_virtual++;
+            pos_virtual_vertex = i;
         }
         if (vertices[i]->IsHVertex()) {
             n_Hvertex++;
-            // Move H vertex to the front if not already there
-            if (i != 0) { std::swap(vertices[0], vertices[i]); }
+            pos_Hvertex = i;
         }
     }
 
+    // Amplitudes can not be connected to each other, but just to H or the virtual vertex.
+    
     has_virtual_vertex = (n_virtual > 0);
     has_Hvertex = (n_Hvertex > 0);
 
@@ -33,13 +35,17 @@ bool CoupledClusterDiagram::GetConnectivity(const IntMat &adj) {
     
     bool connected = Diagram::GetConnectivity(adj);
     if (!connected) return false;
-
+    
     // Additional checks specific to Coupled Cluster diagrams can be added here
     
     if (!has_Hvertex) return false; // Must have H vertex
+
     // H vertex must be connected to all other vertices
-    for (int j=1; j<vertices.size(); ++j) {
-        if (adjacency_matrix(0,j) + adjacency_matrix(j,0)==0 ) return false;
+    for (int j=0; j<vertices.size(); ++j) {
+        if (j == pos_Hvertex) continue; // Skip H vertex itself
+        if (adj(pos_Hvertex,j) + adj(j,pos_Hvertex)==0 ) {
+            return false;
+        }
     }
 
     return connected;

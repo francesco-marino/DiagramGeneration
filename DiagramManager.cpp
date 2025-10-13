@@ -3,11 +3,20 @@
 
 #include "DataStructures.h"
 #include "DiagramManager.h"
+#include "Parallel.h"
 
+using std::cout;
 using namespace arma;
 
 void DiagramManager::Build(bool only_connected) {
-    this->GenerateAdjacencyMatrix(only_connected);
+
+    double tstart = Clock();
+
+    this->EnumerateDiagrams(only_connected);
+    //this->PostProcessDiagrams();
+
+    double tend = Clock() - tstart;
+    if (0==rank) { cout << "Diagram generation completed in " << tend << " seconds.\n"; }
 }
 
 void DiagramManager::AddVertex(const Vertex& vertex) {
@@ -18,7 +27,7 @@ void DiagramManager::AddVertex(const unique_ptr<Vertex>& vertex) {
     vertices.push_back(make_unique<Vertex>(*vertex));
 }
 
-void DiagramManager::GenerateAdjacencyMatrix(bool only_connected) {
+void DiagramManager::EnumerateDiagrams(bool only_connected) {
     
     int n = vertices.size();
 
@@ -85,12 +94,14 @@ void DiagramManager::GenerateAdjacencyMatrix(bool only_connected) {
 
             if (valid) {
                 diagrams.push_back(move(diag));
-                adjacency_matrices.push_back(candidate_matrix);
             }
         }
     }
 
-    this->adjacency_matrices = adjacency_matrices;
+    for (const auto& diag : diagrams) { 
+        this->adjacency_matrices.push_back(diag->GetAdjacencyMatrix());
+    }
+
     return;
 }
 
@@ -149,15 +160,16 @@ void DiagramManager::Cleanup() {
 }
 
 
-void DiagramManager::Test(int order) {
+void DiagramManager::Test(int order, bool print/*=true*/) {
     // Try generating Mbpt diagrams of a given order
     std::cout << "Testing DiagramManager class...\n";
+    this->Cleanup();
 
     for (int i=0; i<order; ++i) {
         Vertex v(2, 2);
         this->AddVertex(v);
     }
-    this->Build();
-    this->Print();
+    this->Build(true);
+    if (print && 0==rank) this->Print();
     return;
 }

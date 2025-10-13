@@ -15,4 +15,23 @@ vector<int> MbptDiagram::FindSkeletonStructure(const IntMat& mat) const {
     return skeleton;
 }
 
+// TODO HERE This still needs work
+bool MbptDiagram::IsConjugateToDiag(const MbptDiagram& other) { 
+    bool check_adjacency = arma::all(arma::vectorise(adjacency_matrix.t() == other.adjacency_matrix));
+    bool check_vertices = true;
+
+    has_conjugate = has_conjugate || check_adjacency;
+    return has_conjugate;
+}
+
+
+void MbptDiagram::Print() const {
+    Diagram::Print();
+    if (IsSelfConjugate()) {
+        std::cout << "Self-conjugate.\n";
+    } else if (HasConjugate()) {
+        std::cout << "Has pair-conjugate.\n";
+    }
+    return;
+}
         

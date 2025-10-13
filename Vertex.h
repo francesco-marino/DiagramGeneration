@@ -1,5 +1,6 @@
 #pragma once
 
+#include <memory>
 #include <string>
 
 class Vertex {
@@ -22,6 +23,9 @@ class Vertex {
         std::string GetName() const { return name; }
         void SetName(const std::string& name) { this->name = name; }
 
+        virtual bool operator==(const Vertex& other) const;
+        bool operator==(const std::unique_ptr<Vertex>& other) const;
+
     protected:
         int Nin, Nout;
         bool isvirtual;
@@ -40,15 +44,15 @@ class Vertex {
 
 class V1bVertex : public Vertex {
     public:
-        V1bVertex() : Vertex(1, 1, false) { };
+        V1bVertex() : Vertex(1, 1, false, "F", true) { };
 };
 
 class V2bVertex : public Vertex {
     public:
-        V2bVertex() : Vertex(2, 2, false) { };
+        V2bVertex() : Vertex(2, 2, false, "V", true) { };
 };
 
 class V3bVertex : public Vertex {
     public:
-        V3bVertex() : Vertex(3, 3, false) { };
+        V3bVertex() : Vertex(3, 3, false, "W", true) { };
 };

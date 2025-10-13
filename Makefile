@@ -23,7 +23,7 @@ cc_objects   = CoupledClusterDiagram.o CoupledClusterDiagramManager.o
 
 fortran_objects = 
 cpp_objects = Main.o ${mbpt_objects} ${cc_objects} \
-	DataStructures.o AdjacencyMatrix.o Vertex.o DiagramManager.o Diagram.o 
+	DataStructures.o AdjacencyMatrix.o Vertex.o DiagramManager.o Diagram.o Parallel.o
 
 %.o: %.f
 	$(FC) $(FFLAGS_ALL) -c $<
@@ -57,6 +57,8 @@ Vertex.o: Vertex.cpp
 DataStructures.o: DataStructures.cpp
 
 AdjacencyMatrix.o: AdjacencyMatrix.cpp
+
+Parallel.o: Parallel.cpp
 
 clean:
 	rm -f *\.mod *\.o *~
