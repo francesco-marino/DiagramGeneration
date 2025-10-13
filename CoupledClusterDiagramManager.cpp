@@ -1,0 +1,1 @@
+#include "CoupledClusterDiagramManager.h"

@@ -6,14 +6,19 @@ class Vertex {
 
     public:
         Vertex() { Init(0, 0, false); }
-        Vertex(int Nin, int Nout, bool virtual_flag=false, const std::string& name="") { Init(Nin, Nout, virtual_flag); SetName(name); }
+        Vertex(int Nin, int Nout, bool virtual_flag=false, const std::string& name="", bool is_Hvertex=false) { Init(Nin, Nout, virtual_flag, is_Hvertex); SetName(name); }
         ~Vertex() {};
 
         int GetNin() const { return Nin; }
         int GetNout() const { return Nout; }
         bool IsVirtual() const { return isvirtual; }
+        bool IsHVertex() const { return is_Hvertex; }
+
+        void HamiltonianVertex() { is_Hvertex = true; }
+
         std::string GetLatexSymbol() const { return latex_symbol; }
         void SetLatexSymbol(const std::string& symbol) { latex_symbol = symbol; }
+        
         std::string GetName() const { return name; }
         void SetName(const std::string& name) { this->name = name; }
 
@@ -22,11 +27,13 @@ class Vertex {
         bool isvirtual;
         std::string name;
         std::string latex_symbol;
+        bool is_Hvertex;
 
-        void Init(int Nin, int Nout, bool virtual_flag=false) {
+        void Init(int Nin, int Nout, bool virtual_flag=false, bool is_Hvertex=false) {
             this->Nin = Nin;
             this->Nout = Nout;
             this->isvirtual = virtual_flag;
+            this->is_Hvertex = is_Hvertex;
         }
 
 };
