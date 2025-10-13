@@ -75,11 +75,12 @@ void DiagramManager::GenerateAdjacencyMatrix(bool only_connected) {
             }
 
             // Convert into Diagram
-            auto diag = CreateDiagram(candidate_matrix);
+            unique_ptr<Diagram> diag = CreateDiagram(candidate_matrix, vertices);
+            diag->Build();
             if (only_connected && !diag->IsConnected()) { valid = false; }
 
             if (valid) {
-                diagrams.push_back(*diag);
+                diagrams.push_back(move(diag));
                 adjacency_matrices.push_back(candidate_matrix);
             }
         }
@@ -90,21 +91,12 @@ void DiagramManager::GenerateAdjacencyMatrix(bool only_connected) {
 }
 
 
-void DiagramManager::GenerateDiagramsFromMatrices(const vector<IntMat>& matrices) {
-    diagrams.clear();
-    for (const auto& mat : matrices) {
-        Diagram diag(mat);
-        diagrams.push_back(diag);
-    }
-}
-
-
 void DiagramManager::PrintMatrices() const {
 
     // Iterate over diagrams to print their adjacency matrices
     for (int ind=0; ind<diagrams.size(); ++ind) {
         std::cout << "Matrix " << ind+1 << ":\n";
-        diagrams[ind].PrintMat();
+        diagrams[ind]->PrintMat();
         std::cout << "\n";
     }
 
@@ -122,7 +114,7 @@ void DiagramManager::Print() const {
     }
     for (int ind=0; ind<diagrams.size(); ++ind) {
         std::cout << "Diagram " << ind+1 << ":\n";
-        diagrams[ind].Print();
+        diagrams[ind]->Print();
         std::cout << "\n";
     }
     return;
@@ -134,7 +126,7 @@ void DiagramManager::Cleanup() {
     for (auto& mat : adjacency_matrices) { mat.clear(); }
     adjacency_matrices.clear();
 
-    for (auto& diag : diagrams) { /* diag.Cleanup(); */ } // Assuming Diagram has a Cleanup method
+    for (auto& diag : diagrams) { diag->Cleanup(); } 
     diagrams.clear();
 }
 

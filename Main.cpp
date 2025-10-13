@@ -2,6 +2,7 @@
 #include <vector>
 
 #include "AdjacencyMatrix.h"
+#include "CoupledClusterDiagramManager.h"
 #include "DataStructures.h"
 #include "DiagramManager.h"
 #include "MbptDiagramManager.h"
@@ -49,10 +50,10 @@ int main() {
     mbpt_w3.Build();
     mbpt_w3.Print();
 
-    MbptDiagramManager cc_t2;
+    CoupledClusterDiagramManager cc_t2;
     cc_t2.AddVertex( Vertex(2,2,false,"T2") );
     cc_t2.AddVertex( Vertex(2,2,false,"T2") );
-    cc_t2.AddVertex( Vertex(2,2,false,"H") );
+    cc_t2.AddVertex( Vertex(2,2,false,"H",true) );
     cc_t2.AddVertex( Vertex(2,2,true,"Ext") );
     cc_t2.Build(true);
     cc_t2.Print();
@@ -61,9 +62,9 @@ int main() {
     MbptDiagramManager eom;
     eom.AddVertex( Vertex(2,2,true,"D") );
     eom.AddVertex( Vertex(1,1,false,"R") );
-    eom.AddVertex( Vertex(1,1,false,"H") );
+    eom.AddVertex( Vertex(2,2,false,"H") );
     eom.Build(false);
-    eom.Print();
+    //eom.Print();
 
     return 0;
 }

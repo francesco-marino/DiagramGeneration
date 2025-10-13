@@ -9,6 +9,8 @@
 #include "Vertex.h"
 
 using std::vector; 
+using std::string;
+using std::unique_ptr;
 
 class DiagramManager {
 
@@ -25,25 +27,25 @@ class DiagramManager {
         void Print() const;
 
         vector<IntMat> GetAdjacencyMatrices() const { return adjacency_matrices; }
-        vector<Diagram> GetDiagrams() const { return diagrams; }
-        Diagram GetDiagram(int index) const { return diagrams[index]; }
+        vector< unique_ptr<Diagram> >& GetDiagrams() { return diagrams; }
+        const unique_ptr<Diagram>& GetDiagram(int index) const { return diagrams[index]; }
         vector<Vertex> GetVertices() const { return vertices; }
 
         void Test(int order);
 
     protected:
         vector<Vertex> vertices;
-        vector<Diagram> diagrams;
+        vector< unique_ptr<Diagram> > diagrams;
         vector<IntMat> adjacency_matrices;
 
         void AssignVertices(const vector<Vertex>& vertices_in) { vertices = vertices_in; }
 
         // Factory method to create Diagram instances
-        virtual std::unique_ptr<Diagram> CreateDiagram(const IntMat& mat) const = 0;
+        unique_ptr<Diagram> CreateDiagram(const IntMat& mat) const { return CreateDiagram(mat, {}); }
+        virtual unique_ptr<Diagram> CreateDiagram(const IntMat& mat, const vector<Vertex>& vertices_in) const = 0;
 
         void Cleanup();
         void GenerateAdjacencyMatrix(bool only_connected=false);
-        void GenerateDiagramsFromMatrices(const vector<IntMat>& matrices);
-
+       
      private:
 };

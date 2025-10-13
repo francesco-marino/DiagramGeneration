@@ -15,6 +15,6 @@ class MbptDiagramManager : public DiagramManager {
         
     protected:
 
-        std::unique_ptr<Diagram> CreateDiagram(const IntMat& mat) const override { return std::make_unique<Diagram>(mat); }
+        std::unique_ptr<Diagram> CreateDiagram(const IntMat& mat, const vector<Vertex>& vertices_in) const override { return std::make_unique<MbptDiagram>(mat, vertices_in); }
 
 };

@@ -70,6 +70,7 @@ vector<int> AdjacencyMatrix::SkeletonStructure() const {
     return skeleton;
 }
 
+
 // TODO HERE Check this function
 int AdjacencyMatrix::CountLoops() const {
     // We have a loop if i is connecte to j and j is connected to i

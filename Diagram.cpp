@@ -5,21 +5,23 @@
 
 void Diagram::BuildFromAdjacencyMatrix(const IntMat& mat) {
     adjacency_matrix = mat;
-    this->ProcessMatrix();
+    CheckVertices();
+    GetConnectivity();
+    FindSkeletonStructure();
 } 
 
 void Diagram::Cleanup() {
     vertices.clear();
     adjacency_matrix.clear();
     is_connected = false;
-}
-
-
-// TOOD HERE Implement this function
-void Diagram::ProcessMatrix() {
-    GetConnectivity();
+    has_virtual_vertex = false;
+    has_Hvertex = false;
+    built = false;
+    skeleton_structure.clear();
+    type = "Generic";
     return;
 }
+
 
 bool Diagram::GetConnectivity(const IntMat &adj)  {
     
@@ -59,11 +61,30 @@ void Diagram::GetConnectivity()  {
 }
 
 void Diagram::Print() const {
+    std::cout << "Diagram Type: " << GetType() << "\n";
+    std::cout << "Is Connected: " << (is_connected ? "Yes" : "No") << "\n";
     std::cout << "Adjacency Matrix:\n";
     adjacency_matrix.print();
-    std::cout << "Is Connected: " << (is_connected ? "Yes" : "No") << "\n";
+    std::cout << "Skeleton Structure: ";
+    for (auto val : skeleton_structure) { std::cout << val << " "; }
+    std::cout << "\n";
     return;
 }
 
+
+vector<int> MbptDiagram::FindSkeletonStructure(const IntMat& mat) const {
+    // Follow Shavitt&Bartlett, Sec. 5.7.2
+    int row = 0;
+    int n = mat.n_rows;
+    vector<int> skeleton;
+
+    for (int col=0; col<n; ++col) {
+        if (col == row) continue;
+        int conn = mat(row, col) + mat(col, row);
+        skeleton.push_back(conn);
+    }
+
+    return skeleton;
+}
 
         

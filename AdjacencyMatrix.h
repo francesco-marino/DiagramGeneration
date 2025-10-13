@@ -46,7 +46,7 @@ class MbptDiagramsManager {
 
         vector<IntMat> GetAdjacencyIntMat() const { return adjacency_intmat; }
         vector<AdjacencyMatrix> GetAdjacencyMatrices() const { return adjacency_matrices; }
-        vector< vector<int> > GetSkeletonStructures() const { return skeleton_structures; }
+        vector< vector<int> > FindSkeletonStructures() const { return skeleton_structures; }
 
         set< vector<int> > GetUniqueSkeletonStructures() const {  
             set< vector<int> > Set(skeleton_structures.begin(), skeleton_structures.end()); 
