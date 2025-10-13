@@ -17,9 +17,13 @@ CXXFLAGS+= -I${ARMADILLO_INC}
 FFLAGS_ALL=   ${FFLAGS}   ${OLEVEL} $(DEBUG_FF)  ${ARCH}
 CXXFLAGS_ALL= ${CXXFLAGS} ${OLEVEL} $(DEBUG_CXX) ${ARCH} ${ARMA_FLAGS} -DUSE_COMPLEX
 
+mbpt_objects = MbptDiagram.o MbptDiagramManager.o
+cc_objects   = CoupledClusterDiagram.o CoupledClusterDiagramManager.o
+
+
 fortran_objects = 
-cpp_objects = Main.o CoupledClusterDiagramManager.o CoupledClusterDiagram.o \
-	DataStructures.o AdjacencyMatrix.o Vertex.o DiagramManager.o Diagram.o MbptDiagramManager.o
+cpp_objects = Main.o ${mbpt_objects} ${cc_objects} \
+	DataStructures.o AdjacencyMatrix.o Vertex.o DiagramManager.o Diagram.o 
 
 %.o: %.f
 	$(FC) $(FFLAGS_ALL) -c $<
@@ -39,12 +43,12 @@ Exe: $(fortran_objects) $(cpp_objects)
 Main.o: Main.cpp AdjacencyMatrix.o DataStructures.o DiagramManager.o MbptDiagramManager.o
 
 CoupledClusterDiagramManager.o: CoupledClusterDiagramManager.cpp CoupledClusterDiagram.o  Diagram.o Vertex.o
+CoupledClusterDiagram.o: CoupledClusterDiagram.cpp Diagram.o Vertex.o
 
-MbptDiagramManager.o: MbptDiagramManager.cpp DiagramManager.o Diagram.o Vertex.o
+MbptDiagramManager.o: MbptDiagramManager.cpp DiagramManager.o MbptDiagram.o
+MbptDiagram.o: MbptDiagram.cpp Diagram.o
 
 DiagramManager.o: DiagramManager.cpp Diagram.o Vertex.o
-
-CoupledClusterDiagram.o: CoupledClusterDiagram.cpp Diagram.o Vertex.o
 
 Diagram.o: Diagram.cpp Vertex.o
 

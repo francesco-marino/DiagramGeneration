@@ -13,10 +13,10 @@ void CoupledClusterDiagram::CheckVertices() {
 
     for (int i=0; i<vertices.size(); ++i) {
 
-        if (vertices[i].IsVirtual()) {
+        if (vertices[i]->IsVirtual()) {
             n_virtual++;
         }
-        if (vertices[i].IsHVertex()) {
+        if (vertices[i]->IsHVertex()) {
             n_Hvertex++;
             // Move H vertex to the front if not already there
             if (i != 0) { std::swap(vertices[0], vertices[i]); }

@@ -3,6 +3,21 @@
 #include <armadillo>
 #include <queue>
 
+
+Diagram::Diagram(const IntMat& mat, const vector<Vertex>& vertices_in) { 
+    InitDiagram(); 
+    adjacency_matrix = mat; 
+    SetVertices(vertices_in); 
+}
+
+
+Diagram::Diagram(const IntMat& mat, const vector< unique_ptr<Vertex> >& vertices_in) { 
+    InitDiagram(); 
+    adjacency_matrix = mat; 
+    SetVertices(vertices_in); 
+}
+
+
 void Diagram::BuildFromAdjacencyMatrix(const IntMat& mat) {
     adjacency_matrix = mat;
     CheckVertices();
@@ -20,6 +35,20 @@ void Diagram::Cleanup() {
     skeleton_structure.clear();
     type = "Generic";
     return;
+}
+
+void Diagram::SetVertices(const vector< unique_ptr<Vertex> >& vertices_in) {
+    vertices.clear();
+    for (const auto& v : vertices_in) {
+        vertices.push_back(std::make_unique<Vertex>(*v));
+    }
+}
+
+void Diagram::SetVertices(const vector<Vertex>& vertices_in) {
+    vertices.clear();
+    for (const auto& v : vertices_in) {
+        vertices.push_back(std::make_unique<Vertex>(v));
+    }
 }
 
 
@@ -72,19 +101,3 @@ void Diagram::Print() const {
 }
 
 
-vector<int> MbptDiagram::FindSkeletonStructure(const IntMat& mat) const {
-    // Follow Shavitt&Bartlett, Sec. 5.7.2
-    int row = 0;
-    int n = mat.n_rows;
-    vector<int> skeleton;
-
-    for (int col=0; col<n; ++col) {
-        if (col == row) continue;
-        int conn = mat(row, col) + mat(col, row);
-        skeleton.push_back(conn);
-    }
-
-    return skeleton;
-}
-
-        

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <armadillo>
+#include <memory>
 #include <string>
 #include <vector>
 
@@ -8,6 +9,8 @@
 
 using std::vector;
 using std::string;
+using std::unique_ptr;
+
 typedef arma::Mat<int> IntMat;
 typedef arma::Row<int> IntRow;
 
@@ -18,7 +21,8 @@ class Diagram {
 
         Diagram() { InitDiagram(); }
         Diagram(const IntMat& mat) { InitDiagram(); adjacency_matrix = mat; }
-        Diagram(const IntMat& mat, const vector<Vertex>& vertices_in) { InitDiagram(); adjacency_matrix = mat; SetVertices(vertices_in); }
+        Diagram(const IntMat& mat, const vector<Vertex>& vertices_in);
+        Diagram(const IntMat& mat, const vector< unique_ptr<Vertex> >& vertices_in);
 
         ~Diagram() { Cleanup();}
 
@@ -26,10 +30,11 @@ class Diagram {
         void Build(const IntMat& mat) { BuildFromAdjacencyMatrix(mat); built = true;}
 
         IntMat GetAdjacencyMatrix() const { return adjacency_matrix; }
-        
-        void SetVertices(const vector<Vertex>& vertices_in) { vertices = vertices_in; }
-        vector<Vertex> GetVertices() const { return vertices; }
-        
+
+        void SetVertices(const vector< unique_ptr<Vertex> >& vertices_in);
+        void SetVertices(const vector<Vertex>& vertices_in);
+        const vector< unique_ptr<Vertex> >& GetVertices() const { return vertices; }
+
         bool IsConnected() const { return is_connected; }
         bool IsBuilt() const { return built; }
         vector<int> GetSkeletonStructure() const { return skeleton_structure; }
@@ -44,7 +49,7 @@ class Diagram {
 
     protected:
 
-        vector<Vertex> vertices;
+        vector< unique_ptr<Vertex> > vertices;
         IntMat adjacency_matrix;
         vector<int> skeleton_structure;
         
@@ -67,14 +72,3 @@ class Diagram {
         void InitDiagram() { Cleanup(); type = "Generic"; }
 };
 
-class MbptDiagram : public Diagram {
-    public:
-        MbptDiagram() : Diagram() { type = "MBPT"; }
-        MbptDiagram(const IntMat& mat) : Diagram(mat) { this->type = "MBPT"; }
-        MbptDiagram(const IntMat& mat, const vector<Vertex>& vertices_in) : Diagram(mat, vertices_in) { this->type = "MBPT"; }
-        ~MbptDiagram() {}
-
-    protected:
-        void CheckVertices() override {};
-        vector<int> FindSkeletonStructure(const IntMat& mat) const override; // Implements skeleton structure extraction for MBPT diagrams
-};

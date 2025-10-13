@@ -4,6 +4,7 @@
 
 #include "Diagram.h"
 #include "DiagramManager.h"
+#include "MbptDiagram.h"
 #include "Vertex.h"
 
 class MbptDiagramManager : public DiagramManager {
@@ -15,6 +16,7 @@ class MbptDiagramManager : public DiagramManager {
         
     protected:
 
+        std::unique_ptr<Diagram> CreateDiagram(const IntMat& mat, const vector< unique_ptr<Vertex> >& vertices_in) const override { return std::make_unique<MbptDiagram>(mat, vertices_in); }
         std::unique_ptr<Diagram> CreateDiagram(const IntMat& mat, const vector<Vertex>& vertices_in) const override { return std::make_unique<MbptDiagram>(mat, vertices_in); }
 
 };

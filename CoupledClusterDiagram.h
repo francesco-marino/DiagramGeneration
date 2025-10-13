@@ -9,6 +9,7 @@ class CoupledClusterDiagram : public Diagram {
         CoupledClusterDiagram() : Diagram() {}
         CoupledClusterDiagram(const IntMat& mat) : Diagram(mat) { this->type = "CC"; }
         CoupledClusterDiagram(const IntMat& mat, const vector<Vertex>& vertices_in) : Diagram(mat, vertices_in) { this->type = "CC"; }
+        CoupledClusterDiagram(const IntMat& mat, const vector< unique_ptr<Vertex> >& vertices_in) : Diagram(mat, std::move(vertices_in)) { this->type = "CC"; }
         ~CoupledClusterDiagram() {}
 
     protected:

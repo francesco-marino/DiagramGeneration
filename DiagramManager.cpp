@@ -11,7 +11,11 @@ void DiagramManager::Build(bool only_connected) {
 }
 
 void DiagramManager::AddVertex(const Vertex& vertex) {
-    vertices.push_back(vertex);
+    vertices.push_back(make_unique<Vertex>(vertex));
+}
+
+void DiagramManager::AddVertex(const unique_ptr<Vertex>& vertex) {
+    vertices.push_back(make_unique<Vertex>(*vertex));
 }
 
 void DiagramManager::GenerateAdjacencyMatrix(bool only_connected) {
@@ -22,13 +26,13 @@ void DiagramManager::GenerateAdjacencyMatrix(bool only_connected) {
     // Sum( Col(j) ) = Nin(j)
 
     // The first row acts as a pivot
-    vector< vector<int> > sequences = generate_sequences(n, vertices[0].GetNout());
+    vector< vector<int> > sequences = generate_sequences(n, vertices[0]->GetNout());
     vector<int> pivot_indices = select_by_condition(sequences, {0}, {0});
 
     // Generate sequences for each column
     vector< vector< vector<int> > > all_columns_sequences;
     for (int j=0; j<n; ++j) {
-        vector< vector<int> > col_seq = generate_sequences(n, vertices[j].GetNin());
+        vector< vector<int> > col_seq = generate_sequences(n, vertices[j]->GetNin());
         all_columns_sequences.push_back(col_seq);
     }
 
@@ -68,7 +72,7 @@ void DiagramManager::GenerateAdjacencyMatrix(bool only_connected) {
             // Check that sum of each row and column is equal to 'sum'
             bool valid = true;
             for (int i=0; i<n; ++i) {
-                if (arma::accu(candidate_matrix.row(i)) != vertices[i].GetNout() || arma::accu(candidate_matrix.col(i)) != vertices[i].GetNin()) {
+                if (arma::accu(candidate_matrix.row(i)) != vertices[i]->GetNout() || arma::accu(candidate_matrix.col(i)) != vertices[i]->GetNin()) {
                     valid = false;
                     break;
                 }
@@ -90,6 +94,20 @@ void DiagramManager::GenerateAdjacencyMatrix(bool only_connected) {
     return;
 }
 
+
+void DiagramManager::AssignVertices(const vector<Vertex>& vertices_in) {
+    vertices.clear();
+    for (const auto& v : vertices_in) {
+        vertices.push_back(make_unique<Vertex>(v));
+    }
+}
+
+void DiagramManager::AssignVertices(const vector< unique_ptr<Vertex> >& vertices_in) {
+    vertices.clear();
+    for (const auto& v : vertices_in) {
+        vertices.push_back(make_unique<Vertex>(*v));
+    }
+}
 
 void DiagramManager::PrintMatrices() const {
 
