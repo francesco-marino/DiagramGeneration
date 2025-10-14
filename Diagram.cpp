@@ -18,10 +18,13 @@ Diagram::Diagram(const IntMat& mat, const vector< unique_ptr<Vertex> >& vertices
 }
 
 
+//
+// Build and check if it is connected (+ other optional checks)
+//
 void Diagram::BuildFromAdjacencyMatrix(const IntMat& mat) {
     adjacency_matrix = mat;
-    CheckVertices();
-    GetConnectivity();
+    CheckIsValid();     // Check vertices satisfy requirements
+    GetConnectivity();  // Check if connected
 } 
 
 void Diagram::Process() {
@@ -61,7 +64,9 @@ vector< vector<int> > Diagram::FindEquivalentVertices(const vector< unique_ptr<V
 void Diagram::Cleanup() {
     vertices.clear();
     adjacency_matrix.clear();
+    is_valid = false;
     is_connected = false;
+    is_redundant = false;
     has_virtual_vertex = false;
     has_Hvertex = false;
     pos_Hvertex = -1;
@@ -105,7 +110,7 @@ bool Diagram::GetConnectivity(const IntMat &adj)  {
         q.pop();
 
         for (int u = 0; u < n; ++u) {
-            if (adj(v, u) && !visited[u]) {
+            if ( (adj(v, u)>0 || adj(u, v)>0) && !visited[u]) {
                 visited[u] = true;
                 q.push(u);
             }
@@ -113,8 +118,9 @@ bool Diagram::GetConnectivity(const IntMat &adj)  {
     }
 
     // Check if all vertices were visited
-    for (bool v : visited)
+    for (bool v : visited) {
         if (!v) return false;
+    }
 
     return true;
 }

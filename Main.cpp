@@ -42,22 +42,33 @@ int main() {
     cc_0.Build();
     cc_0.Print();
     
-    
+
     CoupledClusterDiagramManager cc_t2;
-    cc_t2.AddVertex( T2Vertex() );
-    cc_t2.AddVertex( T2Vertex() );
+    // First-order diagrams - T2 with V
     cc_t2.AddVertex( V2bVertex() );
+    cc_t2.AddVertex( T2Vertex() );
+    cc_t2.AddVertex( T2Vertex() );
     cc_t2.AddVertex( Vertex(2,2,true,"Ext") );
     cc_t2.Build(true);
     cc_t2.Print();
 
-    cout << "\n\n\n";
-    MbptDiagramManager eom;
-    eom.AddVertex( Vertex(2,2,true,"D") );
-    eom.AddVertex( Vertex(1,1,false,"R") );
-    eom.AddVertex( Vertex(2,2,false,"H") );
-    //eom.Build(false);
-    //eom.Print();
+    /*
+    cc_t2.Reset();
+    // First-order diagrams - T2 with V1b
+    cc_t2.AddVertex( V1bVertex() );
+    cc_t2.AddVertex( T2Vertex() );
+    cc_t2.AddVertex( Vertex(1,1,true,"Ext") );
+    cc_t2.Build(false);
+    cc_t2.Print();
+    */
+
+    vector< Vertex > vertices = { V1bVertex(), T2Vertex(), Vertex(1,1,true,"Ext") };
+    IntMat mat = { {0,1,0},
+                    {1,0,1},
+                    {0,1,0} };
+    unique_ptr<CoupledClusterDiagram> cc_diag = make_unique<CoupledClusterDiagram>(mat, vertices);
+    cc_diag->Build();
+    cc_diag->Print();
 
     Finalize();
     return 0;

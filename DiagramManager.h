@@ -62,6 +62,6 @@ class DiagramManager {
         void AssignVertices(const vector<Vertex>& vertices_in);
         void AssignVertices(const vector< unique_ptr<Vertex> >& vertices_in);
 
-        void EnumerateDiagrams(bool only_connected=false);
+        void EnumerateDiagrams(bool only_connected=false, bool remove_redundant=true);
 
 };

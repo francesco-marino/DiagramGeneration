@@ -17,7 +17,7 @@ class MbptDiagram : public Diagram {
         void Print() const override;
 
     protected:
-        void CheckVertices() override {};
+        void CheckIsValid() override;
         vector<int> FindSkeletonStructure(const IntMat& mat) const override; // Implements skeleton structure extraction for MBPT diagrams
 
     private:

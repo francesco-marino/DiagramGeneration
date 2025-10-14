@@ -14,7 +14,7 @@ class CoupledClusterDiagram : public Diagram {
 
     protected:
 
-        void CheckVertices() override;
+        void CheckIsValid() override;
         bool GetConnectivity(const IntMat &adj) override ;
         vector<int> FindSkeletonStructure(const IntMat& mat) const override; // Implements skeleton structure extraction for CC diagrams
 

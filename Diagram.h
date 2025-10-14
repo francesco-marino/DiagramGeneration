@@ -45,6 +45,8 @@ class Diagram {
         bool HasVirtualVertex() const { return has_virtual_vertex; }
         bool IsConnected() const { return is_connected; }
         bool IsBuilt() const { return built; }
+        bool IsRedundant() const { return is_redundant; }
+        bool IsValid() const { return is_valid; }
         vector<int> GetSkeletonStructure() const { return skeleton_structure; }
 
         void SetType(const string& type) { this->type = type; }
@@ -57,8 +59,6 @@ class Diagram {
 
         virtual void Cleanup() ;
 
-        void BuildDirectedGraph();
-
     protected:
 
         vector< unique_ptr<Vertex> > vertices;
@@ -67,17 +67,19 @@ class Diagram {
         unique_ptr<DirectedGraph> directed_graph;
         vector< vector<int> > equivalent_vertices;
         
+        bool is_valid;
         bool is_connected;
+        bool is_redundant;
+
         bool has_virtual_vertex;
         bool has_Hvertex;
-
         int pos_Hvertex;
         int pos_virtual_vertex;
         
         string type;
         bool built;
 
-        virtual void CheckVertices() {};
+        virtual void CheckIsValid() { is_valid = true; } // Basic validity check
         void GetConnectivity(); // Determines if the diagram is connected
         virtual bool GetConnectivity(const IntMat &adj);
 
@@ -88,6 +90,7 @@ class Diagram {
 
     private:
 
+        void BuildDirectedGraph();
         unique_ptr<DirectedGraph> BuildDirectedGraph(const IntMat& mat) const;
         
         void BuildFromAdjacencyMatrix(const IntMat& mat);

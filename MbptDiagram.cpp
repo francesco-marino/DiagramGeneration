@@ -25,6 +25,12 @@ bool MbptDiagram::IsConjugateToDiag(const MbptDiagram& other) {
 }
 
 
+void MbptDiagram::CheckIsValid() {    
+    is_valid = true; // Assume all MBPT diagrams are valid in this context and run no additional checks
+    return;
+}
+
+
 void MbptDiagram::Print() const {
     Diagram::Print();
     if (IsSelfConjugate()) {

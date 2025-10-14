@@ -27,7 +27,7 @@ void DiagramManager::AddVertex(const unique_ptr<Vertex>& vertex) {
     vertices.push_back(make_unique<Vertex>(*vertex));
 }
 
-void DiagramManager::EnumerateDiagrams(bool only_connected) {
+void DiagramManager::EnumerateDiagrams(bool only_connected, bool remove_redundant) {
     
     int n = vertices.size();
 
@@ -90,14 +90,17 @@ void DiagramManager::EnumerateDiagrams(bool only_connected) {
             // Convert into Diagram
             unique_ptr<Diagram> diag = CreateDiagram(candidate_matrix, vertices);
             diag->Build();
-            if (only_connected && !diag->IsConnected()) { valid = false; }
+            
+            if (!diag->IsValid()) { valid = false; }
+            if (only_connected && !diag->IsConnected())  { valid = false; }
+            if (remove_redundant && diag->IsRedundant()) { valid = false; }
 
             if (valid) {
                 diag->Process();
                 diagrams.push_back(move(diag));
             }
         }
-        
+
     }
 
     for (const auto& diag : diagrams) { 

@@ -14,6 +14,7 @@ class Vertex {
         int GetNout() const { return Nout; }
         bool IsVirtual() const { return isvirtual; }
         bool IsHVertex() const { return is_Hvertex; }
+        bool IsAmplitude() const { return (!isvirtual) && (!is_Hvertex); }
 
         void HamiltonianVertex() { is_Hvertex = true; }
 
@@ -22,6 +23,9 @@ class Vertex {
         
         std::string GetName() const { return name; }
         void SetName(const std::string& name) { this->name = name; }
+
+        bool IsEquivalentTo(const Vertex& other) const { return (*this) == other; }
+        bool IsEquivalentTo(const std::unique_ptr<Vertex>& other) const { return IsEquivalentTo(*other); }
 
         virtual bool operator==(const Vertex& other) const;
         bool operator==(const std::unique_ptr<Vertex>& other) const;
