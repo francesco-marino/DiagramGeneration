@@ -40,10 +40,9 @@ int main() {
     cc_0.AddVertex( T1Vertex() );
     cc_0.AddVertex( V2bVertex() );
     cc_0.Build();
-    //cout << "HEY HEY HEY   " << cc_0.GetDiagram(0)->GetAdjacencyMatrix() << "\n";
     cc_0.Print();
-    //cout << cc_0.GetDiagram(0)->HasHVertex();
-
+    
+    
     CoupledClusterDiagramManager cc_t2;
     cc_t2.AddVertex( T2Vertex() );
     cc_t2.AddVertex( T2Vertex() );

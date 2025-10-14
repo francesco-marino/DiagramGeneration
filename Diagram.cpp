@@ -1,8 +1,8 @@
 #include "Diagram.h"
 
 #include <armadillo>
+#include <iostream>
 #include <queue>
-
 
 Diagram::Diagram(const IntMat& mat, const vector<Vertex>& vertices_in) { 
     InitDiagram(); 
@@ -22,8 +22,41 @@ void Diagram::BuildFromAdjacencyMatrix(const IntMat& mat) {
     adjacency_matrix = mat;
     CheckVertices();
     GetConnectivity();
-    FindSkeletonStructure();
 } 
+
+void Diagram::Process() {
+    if (!built) return;
+    FindSkeletonStructure();
+    BuildDirectedGraph();
+}
+
+//
+// Convert an adjacency matrix into a directed graph
+//
+unique_ptr<DirectedGraph> Diagram::BuildDirectedGraph(const IntMat& mat) const {
+
+    int n = mat.n_cols;
+    unique_ptr<DirectedGraph> boost_graph = std::make_unique<DirectedGraph>(n);
+
+    for (int i=0; i<n; ++i) {
+        for (int j=i+1; j<n; ++j) {
+            for (int k=0; k<mat.at(i,j); ++k) {
+                boost_graph->AddEdge(i, j);
+            }
+        } 
+    }
+
+    return boost_graph;
+}
+
+
+void Diagram::BuildDirectedGraph() {
+    this->directed_graph = BuildDirectedGraph(adjacency_matrix);
+}
+
+vector< vector<int> > Diagram::FindEquivalentVertices(const vector< unique_ptr<Vertex> >& vertices_in) {
+    
+}
 
 void Diagram::Cleanup() {
     vertices.clear();
@@ -35,6 +68,7 @@ void Diagram::Cleanup() {
     pos_virtual_vertex = -1;
     built = false;
     skeleton_structure.clear();
+    directed_graph.reset();
     type = "Generic";
     return;
 }
@@ -101,5 +135,4 @@ void Diagram::Print() const {
     std::cout << "\n";
     return;
 }
-
 

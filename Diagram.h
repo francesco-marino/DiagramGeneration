@@ -5,6 +5,9 @@
 #include <string>
 #include <vector>
 
+#include <boost/graph/adjacency_matrix.hpp>
+
+#include "Graph.h"
 #include "Vertex.h"
 
 using std::vector;
@@ -26,8 +29,11 @@ class Diagram {
 
         ~Diagram() { Cleanup();}
 
+        // The strategy is to have a fast Build method. If a diagram is valid, we can then process it.
         void Build() { this->Build(adjacency_matrix); }
         void Build(const IntMat& mat) { BuildFromAdjacencyMatrix(mat); built = true;}
+
+        virtual void Process();
 
         IntMat GetAdjacencyMatrix() const { return adjacency_matrix; }
 
@@ -47,14 +53,18 @@ class Diagram {
         void PrintMat() const { adjacency_matrix.print(); }
         virtual void Print() const;
 
+        void PrintGraph() const { directed_graph->Print(); }
+
         virtual void Cleanup() ;
+
+        void BuildDirectedGraph();
 
     protected:
 
         vector< unique_ptr<Vertex> > vertices;
         IntMat adjacency_matrix;
         vector<int> skeleton_structure;
-
+        unique_ptr<DirectedGraph> directed_graph;
         vector< vector<int> > equivalent_vertices;
         
         bool is_connected;
@@ -74,9 +84,12 @@ class Diagram {
         void FindSkeletonStructure() { skeleton_structure = FindSkeletonStructure(adjacency_matrix);  }
         virtual vector<int> FindSkeletonStructure(const IntMat& mat) const { return {13,12}; }; // Placeholder for skeleton structure extraction
 
-        //virtual vector< vector<int> > FindEquivalentVertices(const vector< unique_ptr<Vertex> >& vertices_in); // Placeholder for finding equivalent vertices
+        virtual vector< vector<int> > FindEquivalentVertices(const vector< unique_ptr<Vertex> >& vertices_in); // Placeholder for finding equivalent vertices
 
     private:
+
+        unique_ptr<DirectedGraph> BuildDirectedGraph(const IntMat& mat) const;
+        
         void BuildFromAdjacencyMatrix(const IntMat& mat);
         void InitDiagram() { Cleanup(); type = "Generic"; }
 };

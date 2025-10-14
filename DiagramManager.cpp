@@ -16,7 +16,7 @@ void DiagramManager::Build(bool only_connected) {
     //this->PostProcessDiagrams();
 
     double tend = Clock() - tstart;
-    if (0==rank) { cout << "Diagram generation completed in " << tend << " seconds.\n"; }
+    //if (0==rank) { cout << "Diagram generation completed in " << tend << " seconds.\n"; }
 }
 
 void DiagramManager::AddVertex(const Vertex& vertex) {
@@ -93,9 +93,11 @@ void DiagramManager::EnumerateDiagrams(bool only_connected) {
             if (only_connected && !diag->IsConnected()) { valid = false; }
 
             if (valid) {
+                diag->Process();
                 diagrams.push_back(move(diag));
             }
         }
+        
     }
 
     for (const auto& diag : diagrams) { 

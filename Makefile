@@ -1,6 +1,6 @@
 EXE=Main
 
-OLEVEL= -g -O0 -debug all -traceback 	
+OLEVEL= -O2   #-g -O0 -debug all -traceback 	
 ARCH= -mavx2 -march=core-avx2 -mtune=core-avx2
 
 CXX=mpiicpc
@@ -23,7 +23,7 @@ cc_objects   = CoupledClusterDiagram.o CoupledClusterDiagramManager.o
 
 fortran_objects = 
 cpp_objects = Main.o ${mbpt_objects} ${cc_objects} \
-	DataStructures.o AdjacencyMatrix.o Vertex.o DiagramManager.o Diagram.o Parallel.o
+	DataStructures.o AdjacencyMatrix.o Vertex.o DiagramManager.o Diagram.o Graph.o Parallel.o
 
 %.o: %.f
 	$(FC) $(FFLAGS_ALL) -c $<
@@ -50,13 +50,15 @@ MbptDiagram.o: MbptDiagram.cpp Diagram.o
 
 DiagramManager.o: DiagramManager.cpp Diagram.o Vertex.o
 
-Diagram.o: Diagram.cpp Vertex.o
+Diagram.o: Diagram.cpp Vertex.o Graph.o
 
 Vertex.o: Vertex.cpp
 
 DataStructures.o: DataStructures.cpp
 
 AdjacencyMatrix.o: AdjacencyMatrix.cpp
+
+Graph.o: Graph.cpp
 
 Parallel.o: Parallel.cpp
 

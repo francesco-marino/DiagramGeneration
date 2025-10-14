@@ -33,7 +33,7 @@ class DiagramManager {
 
         vector<IntMat> GetAdjacencyMatrices() const { return adjacency_matrices; }
         vector< unique_ptr<Diagram> >& GetDiagrams() { return diagrams; }
-        const unique_ptr<Diagram>& GetDiagram(int index) const { return diagrams[index]; }
+        unique_ptr<Diagram>& GetDiagram(int index) { return diagrams[index]; }
         vector< unique_ptr<Vertex> >& GetVertices() { return vertices; }
 
         int GetNumberOfDiagrams() const { return diagrams.size(); }
