@@ -98,3 +98,15 @@ vector<int> CoupledClusterDiagram::FindSkeletonStructure(const IntMat& mat) cons
 
     return structure;
 }
+
+std::string CoupledClusterDiagram::GetVertexString() const {
+    
+    std::string vstr = "{";
+    std::string virt = "0";
+    for (const auto& v : vertices) {
+        if (v->IsVirtual()) { virt = v->GetName(); continue; }
+        vstr += v->GetName() + ", ";
+    }
+    vstr += "} -> " + virt;
+    return vstr;
+}

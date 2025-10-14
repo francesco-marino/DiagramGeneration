@@ -7,7 +7,7 @@ class T1Vertex : public Vertex {
     // Represents a T1 amplitude vertex in coupled cluster diagrams
 
     public:
-        T1Vertex() : Vertex(1, 1, false, "T1", false) {}
+        T1Vertex(bool is_virtual=false, const std::string& name="T1") : Vertex(1, 1, is_virtual, name, false) {}
         ~T1Vertex() {}
 
     protected:
@@ -18,7 +18,7 @@ class T2Vertex : public Vertex {
     // Represents a T2 amplitude vertex in coupled cluster diagrams
 
     public:
-        T2Vertex() : Vertex(2, 2, false, "T2", false) {}
+        T2Vertex(bool is_virtual=false, const std::string& name="T2") : Vertex(2, 2, is_virtual, name, false) {}
         ~T2Vertex() {}
 
     protected:

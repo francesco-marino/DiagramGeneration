@@ -12,6 +12,8 @@ class CoupledClusterDiagram : public Diagram {
         CoupledClusterDiagram(const IntMat& mat, const vector< unique_ptr<Vertex> >& vertices_in) : Diagram(mat, std::move(vertices_in)) { this->type = "CC"; }
         ~CoupledClusterDiagram() {}
 
+        std::string GetVertexString() const override;
+        
     protected:
 
         void CheckIsValid() override;

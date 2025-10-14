@@ -41,6 +41,8 @@ class Diagram {
         void SetVertices(const vector<Vertex>& vertices_in);
         const vector< unique_ptr<Vertex> >& GetVertices() const { return vertices; }
 
+        int GetNumberOfVertices() const { return vertices.size(); }
+        virtual int GetPerturbativeOrder() const; 
         bool HasHVertex() const { return has_Hvertex; }
         bool HasVirtualVertex() const { return has_virtual_vertex; }
         bool IsConnected() const { return is_connected; }
@@ -55,6 +57,7 @@ class Diagram {
         void PrintMat() const { adjacency_matrix.print(); }
         virtual void Print() const;
 
+        virtual std::string GetVertexString() const;
         void PrintGraph() const { directed_graph->Print(); }
 
         virtual void Cleanup() ;

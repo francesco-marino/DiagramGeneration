@@ -4,6 +4,7 @@
 #include "AdjacencyMatrix.h"
 #include "CoupledClusterDiagramManager.h"
 #include "CoupledClusterVertex.h"
+#include "CcsdManager.h"
 #include "DataStructures.h"
 #include "DiagramManager.h"
 #include "MbptDiagramManager.h"
@@ -19,6 +20,7 @@ int main() {
     Initialize();
     GetRank(ntasks, rank);
     
+    /*
     MbptDiagramManager diagram;
     //diagram.Test(4, false);
     //cout << "Number of diagrams generated: " << diagram.GetNumberOfDiagrams() << "\n\n";
@@ -33,9 +35,9 @@ int main() {
     cc_0.AddVertex( T2Vertex() );
     cc_0.AddVertex( V2bVertex() );
     cc_0.Build();
-    cc_0.Print();
+    //cc_0.Print();
 
-    cc_0.Reset();
+    cc_0.ResetVertices();
     cc_0.AddVertex( T1Vertex() );
     cc_0.AddVertex( T1Vertex() );
     cc_0.AddVertex( V2bVertex() );
@@ -44,13 +46,16 @@ int main() {
     
 
     CoupledClusterDiagramManager cc_t2;
+    cc_t2.ListAllClusters(2,2);
+
     // First-order diagrams - T2 with V
     cc_t2.AddVertex( V2bVertex() );
     cc_t2.AddVertex( T2Vertex() );
     cc_t2.AddVertex( T2Vertex() );
     cc_t2.AddVertex( Vertex(2,2,true,"Ext") );
-    cc_t2.Build(true);
-    cc_t2.Print();
+    //cc_t2.Build(true);
+    //cc_t2.Print();
+    */
 
     /*
     cc_t2.Reset();
@@ -62,13 +67,11 @@ int main() {
     cc_t2.Print();
     */
 
-    vector< Vertex > vertices = { V1bVertex(), T2Vertex(), Vertex(1,1,true,"Ext") };
-    IntMat mat = { {0,1,0},
-                    {1,0,1},
-                    {0,1,0} };
-    unique_ptr<CoupledClusterDiagram> cc_diag = make_unique<CoupledClusterDiagram>(mat, vertices);
-    cc_diag->Build();
-    cc_diag->Print();
+    CcsdManager ccsd;
+    ccsd.Build(3, false, true, 5);
+    ccsd.SummarizeDiagrams();
+    cout << ccsd.GetNumberOfDiagrams();
+    //ccsd.Print();
 
     Finalize();
     return 0;

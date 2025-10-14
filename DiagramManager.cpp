@@ -154,6 +154,13 @@ void DiagramManager::Print() const {
     return;
 }
 
+void DiagramManager::SummarizeDiagrams() const {
+    for (auto & diag: diagrams) {
+        std::cout << diag->GetVertexString();
+        std::cout << "\n";
+    }
+}
+
 void DiagramManager::Cleanup() {
     vertices.clear();
    

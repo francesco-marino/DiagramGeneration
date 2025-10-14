@@ -25,10 +25,13 @@ class DiagramManager {
         void AddVertex(const unique_ptr<Vertex>& vertex);
         void AddVertex(const Vertex& vertex);
 
-        void Build(bool only_connected=false);
+        virtual void Build(bool only_connected=false);
 
         void PrintMatrices() const;
         void Print() const;
+        void SummarizeDiagrams() const;
+
+        void ResetVertices() { vertices.clear(); }
         void Reset() { Cleanup(); }
 
         vector<IntMat> GetAdjacencyMatrices() const { return adjacency_matrices; }
@@ -48,6 +51,9 @@ class DiagramManager {
         vector< unique_ptr<Diagram> > diagrams;
         vector<IntMat> adjacency_matrices;
 
+        void AssignVertices(const vector<Vertex>& vertices_in);
+        void AssignVertices(const vector< unique_ptr<Vertex> >& vertices_in);
+
         // Factory method to create Diagram instances
         unique_ptr<Diagram> CreateDiagram(const IntMat& mat) const { return CreateDiagram(mat, vector<Vertex>()); }
         virtual unique_ptr<Diagram> CreateDiagram(const IntMat& mat, const vector< unique_ptr<Vertex> >& vertices_in) const = 0;
@@ -58,9 +64,6 @@ class DiagramManager {
         void Cleanup();
        
      private:
-
-        void AssignVertices(const vector<Vertex>& vertices_in);
-        void AssignVertices(const vector< unique_ptr<Vertex> >& vertices_in);
 
         void EnumerateDiagrams(bool only_connected=false, bool remove_redundant=true);
 

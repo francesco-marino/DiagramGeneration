@@ -131,8 +131,25 @@ void Diagram::GetConnectivity()  {
     return;
 }
 
+int Diagram::GetPerturbativeOrder() const { 
+    int n = this->vertices.size();
+    if (has_virtual_vertex) n -= 1;
+    return n;
+}
+
+std::string Diagram::GetVertexString() const {
+    std::string vstr = "{";
+    for (const auto& v : vertices) {
+        vstr += v->GetName() + ", ";
+    }
+    vstr += "}";
+    return vstr;
+}
+
 void Diagram::Print() const {
     std::cout << "Diagram Type: " << GetType() << "\n";
+    std::cout << "Order : " << GetPerturbativeOrder() << "\n";
+    std::cout << "List of Vertices: " << GetVertexString() << "\n";
     std::cout << "Is Connected: " << (is_connected ? "Yes" : "No") << "\n";
     std::cout << "Adjacency Matrix:\n";
     adjacency_matrix.print();

@@ -9,7 +9,9 @@ class CoupledClusterDiagramManager : public DiagramManager {
     // Manages the generation and storage of coupled cluster diagrams using adjacency matrices
 
     public:
+    
         CoupledClusterDiagramManager() { DiagramManager::Cleanup(); }
+        vector< vector<int> > ListAllClusters(int exc_level_max=2, int Hexc_level_max=2);
 
     protected:
 
