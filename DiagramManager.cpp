@@ -72,28 +72,31 @@ void DiagramManager::EnumerateDiagrams(bool only_connected, bool remove_redundan
 
         for (const auto& col_comb: column_combinations) {
 
+            // Each combination of columns is used to fill the candiadte matrix (column by column).
             IntMat candidate_matrix = adj_matrix;
+            bool valid = true;
+
             for (int j=0; j<n; ++j) {
                 int col_index = col_comb[j];
                 candidate_matrix.col(j) = conv_to<arma::Col<int>>::from( all_columns_sequences[j][col_index] );
             }
-            
+
             // Check that sum of each row and column is equal to 'sum'
-            bool valid = true;
             for (int i=0; i<n; ++i) {
                 if (arma::accu(candidate_matrix.row(i)) != vertices[i]->GetNout() || arma::accu(candidate_matrix.col(i)) != vertices[i]->GetNin()) {
                     valid = false;
                     break;
                 }
             }
+            if ( !valid ) { continue; }
 
             // Convert into Diagram
             unique_ptr<Diagram> diag = CreateDiagram(candidate_matrix, vertices);
             diag->Build();
             
-            if (!diag->IsValid()) { valid = false; }
-            if (only_connected && !diag->IsConnected())  { valid = false; }
-            if (remove_redundant && diag->IsRedundant()) { valid = false; }
+            if (!diag->IsValid()) { valid = false;  continue; }
+            if (only_connected && !diag->IsConnected())  { valid = false;  continue; }
+            if (remove_redundant && diag->IsRedundant()) { valid = false;  continue; }
 
             if (valid) {
                 diag->Process();
@@ -156,7 +159,8 @@ void DiagramManager::Print() const {
 
 void DiagramManager::SummarizeDiagrams() const {
     for (auto & diag: diagrams) {
-        std::cout << diag->GetVertexString();
+        std::cout << 
+        diag->GetVertexString();
         std::cout << "\n";
     }
 }

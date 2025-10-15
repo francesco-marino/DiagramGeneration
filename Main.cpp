@@ -70,7 +70,7 @@ int main() {
     CcsdManager ccsd;
     ccsd.Build(3, false, true, 5);
     ccsd.SummarizeDiagrams();
-    cout << ccsd.GetNumberOfDiagrams();
+    cout << ccsd.GetNumberOfDiagrams() << endl;
     //ccsd.Print();
 
     Finalize();
