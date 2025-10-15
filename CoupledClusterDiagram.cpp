@@ -1,4 +1,5 @@
 #include <iostream>
+#include <queue>
 
 #include "CoupledClusterDiagram.h"
 #include "Diagram.h"
@@ -109,4 +110,35 @@ std::string CoupledClusterDiagram::GetVertexString() const {
     }
     vstr += "} -> " + virt;
     return vstr;
+}
+
+void CoupledClusterDiagram::FindLineType() {
+
+    int n_lines = GetNumberOfLines();
+    
+    vector<int> lines_to_visit;
+    for (int i=0; i<n_lines; ++i) lines_to_visit.push_back(i);
+
+    while ( !lines_to_visit.empty() ) {
+
+        cout << "Lines to visit : " << lines_to_visit.size() << std::endl;
+        for (int i=0; i<lines_to_visit.size(); ++i) {
+            int index  = lines_to_visit[i];
+            auto &line = lines[index];
+            string tp = "x";
+
+            // First fix the external lines.
+            if ( line->IsExternalLine() ) {
+                tp = line->PointsToExtern() ? "p" : "h";
+            }
+            else {
+                cout << "Internal " << std::endl;
+
+            }
+            line->SetLineType(tp);
+            lines_to_visit.erase( lines_to_visit.begin()+i );
+        }
+    }
+    
+
 }

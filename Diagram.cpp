@@ -4,12 +4,12 @@
 #include <iostream>
 #include <queue>
 
+
 Diagram::Diagram(const IntMat& mat, const vector<Vertex>& vertices_in) { 
     InitDiagram(); 
     adjacency_matrix = mat; 
     SetVertices(vertices_in); 
 }
-
 
 Diagram::Diagram(const IntMat& mat, const vector< unique_ptr<Vertex> >& vertices_in) { 
     InitDiagram(); 
@@ -30,7 +30,7 @@ void Diagram::BuildFromAdjacencyMatrix(const IntMat& mat) {
 void Diagram::Process() {
     if (!built) return;
     FindSkeletonStructure();
-    BuildDirectedGraph();
+    BuildDirectedGraph();       // TODO HERE   Not really used so far
 }
 
 //

@@ -7,6 +7,7 @@
 #include "CcsdManager.h"
 #include "DataStructures.h"
 #include "DiagramManager.h"
+#include "LabeledDiagram.h"
 #include "MbptDiagramManager.h"
 #include "Parallel.h"
 #include "Vertex.h"
@@ -68,10 +69,19 @@ int main() {
     */
 
     CcsdManager ccsd;
-    ccsd.Build(3, false, true, 5);
+    //ccsd.Build(3, false, true, 5);
+    ccsd.Build(2);
     ccsd.SummarizeDiagrams();
     cout << ccsd.GetNumberOfDiagrams() << endl;
     //ccsd.Print();
+
+    unique_ptr<Diagram> & diag = ccsd.GetDiagram(10);
+    CoupledClusterDiagram label(diag->GetAdjacencyMatrix(), diag->GetVertices());
+    cout << "\n\n";
+    label.Build();
+    label.Process();
+    label.Print();
+    label.PrintLines();
 
     Finalize();
     return 0;

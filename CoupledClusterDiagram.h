@@ -1,15 +1,15 @@
 #pragma once
 
-#include "Diagram.h"
+#include "LabeledDiagram.h"
 
-class CoupledClusterDiagram : public Diagram {
+class CoupledClusterDiagram : public LabeledDiagram {
     // Represents a Coupled Cluster diagram with specific properties and methods
 
     public:
-        CoupledClusterDiagram() : Diagram() {}
-        CoupledClusterDiagram(const IntMat& mat) : Diagram(mat) { this->type = "CC"; }
-        CoupledClusterDiagram(const IntMat& mat, const vector<Vertex>& vertices_in) : Diagram(mat, vertices_in) { this->type = "CC"; }
-        CoupledClusterDiagram(const IntMat& mat, const vector< unique_ptr<Vertex> >& vertices_in) : Diagram(mat, std::move(vertices_in)) { this->type = "CC"; }
+        CoupledClusterDiagram() : LabeledDiagram() {}
+        CoupledClusterDiagram(const IntMat& mat) : LabeledDiagram(mat) { this->type = "CC"; }
+        CoupledClusterDiagram(const IntMat& mat, const vector<Vertex>& vertices_in) : LabeledDiagram(mat, vertices_in) { this->type = "CC"; }
+        CoupledClusterDiagram(const IntMat& mat, const vector< unique_ptr<Vertex> >& vertices_in) : LabeledDiagram(mat, std::move(vertices_in)) { this->type = "CC"; }
         ~CoupledClusterDiagram() {}
 
         std::string GetVertexString() const override;
@@ -20,5 +20,6 @@ class CoupledClusterDiagram : public Diagram {
         bool GetConnectivity(const IntMat &adj) override ;
         vector<int> FindSkeletonStructure(const IntMat& mat) const override; // Implements skeleton structure extraction for CC diagrams
 
-        // vector< vector<int> > FindEquivalentVertices(const vector< unique_ptr<Vertex> >& vertices_in) override { return Diagram::FindEquivalentVertices(vertices_in); }
+        void FindLineType() override;
+        // vector< vector<int> > FindEquivalentVertices(const vector< unique_ptr<Vertex> >& vertices_in) override { return LabeledDiagram::FindEquivalentVertices(vertices_in); }
 };

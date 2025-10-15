@@ -23,7 +23,7 @@ cc_objects   = CoupledClusterDiagram.o CoupledClusterDiagramManager.o CcsdManage
 
 fortran_objects = 
 cpp_objects = Main.o ${mbpt_objects} ${cc_objects} \
-	DataStructures.o AdjacencyMatrix.o Vertex.o DiagramManager.o Diagram.o Graph.o Parallel.o
+	DataStructures.o AdjacencyMatrix.o LabeledDiagram.o Line.o Vertex.o DiagramManager.o Diagram.o Graph.o Parallel.o
 
 %.o: %.f
 	$(FC) $(FFLAGS_ALL) -c $<
@@ -51,8 +51,10 @@ MbptDiagram.o: MbptDiagram.cpp Diagram.o
 
 DiagramManager.o: DiagramManager.cpp Diagram.o Vertex.o
 
+LabeledDiagram.o : LabeledDiagram.cpp Diagram.o Line.o
 Diagram.o: Diagram.cpp Vertex.o Graph.o
 
+Line.o: Line.cpp
 Vertex.o: Vertex.cpp
 
 DataStructures.o: DataStructures.cpp
