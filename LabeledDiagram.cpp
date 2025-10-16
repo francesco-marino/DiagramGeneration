@@ -71,6 +71,7 @@ string VertexWithLine::GetTensorName(const vector<unique_ptr<Line>> &lines) cons
     string out_indeces = ListOutIndeces(lines);
     string in_indeces  = ListInIndeces(lines);
     string tmp = GetLatexSymbol();
+    if ( this->IsVirtual() ) { std::swap(out_indeces, in_indeces); }
     if ( out_indeces.size()>0) tmp += "^{" + out_indeces + "}";
     if ( in_indeces.size()>0)  tmp += "_{" + in_indeces  + "}";
     return tmp;
@@ -113,6 +114,7 @@ void LabeledDiagram::Process() {
     this->FindLineType();
     this->AssignNamesToLines();
     this->FindDiagramExpression();
+    this->nloops = this->CountLoops();
 }
 
 string LabeledDiagram::GetInternalLinesString() const {
@@ -135,6 +137,7 @@ string LabeledDiagram::GetInternalLinesString() const {
 string LabeledDiagram::GetDiagramLatexExpression(bool show_ext) const {
     
     string tmp = "";
+    int sign = ( nloops + this->GetNumberOfHoleLines() )%2;
     
     string Hvert_name = (pos_Hvertex>=0) ? v_with_lines[pos_Hvertex]->GetTensorName(lines) : "";
     string int_lines = GetInternalLinesString();
@@ -156,9 +159,10 @@ string LabeledDiagram::GetDiagramLatexExpression(bool show_ext) const {
         tmp += " " + vert->GetTensorName(lines);
     }
     tmp += " " + Hvert_name;
-
+    if (sign==1)  tmp = "- " + tmp;
     if (show_ext) tmp = ext + tmp;
-    //tmp = "$ " + tmp + " $";
+
+    //cout << "HERE " << nloops << "  " << GetNumberOfHoleLines() << endl;
     return tmp;
 
 }
@@ -217,9 +221,110 @@ void LabeledDiagram::AssignLinesToVertices() {
     return;
 }
 
+// TODO HERE Hard-coded algorithm, not nice...
+int LabeledDiagram::CountLoops() const {
+    int nloops = 0;
+    int nvertices = this->GetNumberOfVertices();
+    int nlines = this->GetNumberOfLines();
+
+    vector<bool> visited(nvertices), lines_visited(nlines);
+
+    for (int i=0; i<nvertices; ++i) visited[i] = false;
+    for (int i=0; i<nlines; ++i)    lines_visited[i] = false;
+
+    // First, we check pairs of vertices connected to each other.    
+    for (int il1=0; il1<nlines; ++il1) {
+        if ( lines_visited[il1] ) continue;
+        int vin1  = lines[il1]->getInIndex();
+        int vout1 = lines[il1]->getOutIndex();
+
+        for (int il2=0; il2<nlines; ++il2) {
+            if ( lines_visited[il1] ) continue;
+            if ( lines_visited[il2] ) continue;
+
+            int vin2  = lines[il2]->getInIndex();
+            int vout2 = lines[il2]->getOutIndex();
+            if (vin2 != vout1) continue;
+
+            if (vout2==vin1) { 
+                lines_visited[il1] = true;
+                lines_visited[il2] = true;
+                ++nloops;
+                break;
+            }
+
+            for (int il3=0; il3<nlines; ++il3) {
+                if ( lines_visited[il1] ) continue;
+                if ( lines_visited[il2] ) continue;
+                if ( lines_visited[il3] ) continue;
+
+                int vin3  = lines[il3]->getInIndex();
+                int vout3 = lines[il3]->getOutIndex();
+                if (vin3 != vout2) continue;
+
+                if (vout3==vin1) {
+                    lines_visited[il1] = true;
+                    lines_visited[il2] = true;
+                    lines_visited[il3] = true;
+                    ++nloops;
+                    break;
+                } 
+
+                for (int il4=0; il4<nlines; ++il4) {
+                    if ( lines_visited[il1] ) continue;
+                    if ( lines_visited[il2] ) continue;
+                    if ( lines_visited[il3] ) continue;
+                    if ( lines_visited[il4] ) continue;
+
+                    int vin4  = lines[il4]->getInIndex();
+                    int vout4 = lines[il4]->getOutIndex();
+                    if (vin4 != vout3) continue;
+
+                    if (vout4==vin1) {
+                        lines_visited[il1] = true;
+                        lines_visited[il2] = true;
+                        lines_visited[il3] = true;
+                        lines_visited[il4] = true;
+
+                        /*
+                        cout << "Closed path " 
+                            << lines[il1]->GetLineName() << " "
+                            << lines[il2]->GetLineName() << " "
+                            << lines[il3]->GetLineName() << " "
+                            << lines[il4]->GetLineName() << " "
+                            << endl;
+                        */
+
+                        ++nloops;
+                        break;
+                    } 
+                }
+            }
+
+        } 
+    }
+
+
+    for (int il=0; il<nlines; ++il) {
+        if (!lines_visited[il]) {
+            cout << "Line " << il << " ( " << lines[il]->GetLineName() << ") was not visited" << endl;
+        }
+    }
+    
+    return nloops;
+}
+
 
 int LabeledDiagram::GetNumberOfLines() const {
     return lines.size();
+}
+
+int LabeledDiagram::GetNumberOfHoleLines() const {
+    int count = 0;
+    for (const auto& ll: lines) {
+        if (ll->GetLineType()=="h") ++count;
+    }
+    return count;
 }
 
 void LabeledDiagram::GetNumberOfPhLines(int &nh, int &np) const {

@@ -80,6 +80,8 @@ class Diagram {
         bool has_Hvertex;
         int pos_Hvertex;
         int pos_virtual_vertex;
+
+        int nloops;
         
         string type;
         bool built;
@@ -87,6 +89,9 @@ class Diagram {
         virtual void CheckIsValid() { is_valid = true; } // Basic validity check
         void GetConnectivity(); // Determines if the diagram is connected
         virtual bool GetConnectivity(const IntMat &adj);
+
+        virtual int CountLoops() { return 0; }
+        // virtual int CountLoops(const IntMat &adj) const {return 0;} // TODO HERE
 
         void FindSkeletonStructure() { skeleton_structure = FindSkeletonStructure(adjacency_matrix);  }
         virtual vector<int> FindSkeletonStructure(const IntMat& mat) const { return {13,12}; }; // Placeholder for skeleton structure extraction

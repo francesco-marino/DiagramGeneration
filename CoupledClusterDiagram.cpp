@@ -123,9 +123,13 @@ void CoupledClusterDiagram::FindLineType() {
         vector<int> lout = vert->GetOutLineIndeces();
         vector<int> lin  = vert->GetInLineIndeces();
 
-        if ( vert->IsAmplitude() || vert->IsVirtual() ) {
+        if ( vert->IsAmplitude() ) {
             for (auto &ll : lout) { lines[ll]->SetLineType("p"); }
             for (auto &ll : lin)  { lines[ll]->SetLineType("h"); }
+        }
+        if ( vert->IsVirtual() ) {  // The virtual vertex is reversed:
+            for (auto &ll : lout) { lines[ll]->SetLineType("h"); }
+            for (auto &ll : lin)  { lines[ll]->SetLineType("p"); }
         }
         
     }

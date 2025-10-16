@@ -26,6 +26,9 @@ class Line {
         int getInIndex()  const { return Vin_index; }
         int getOutIndex() const { return Vout_index; }
 
+        unique_ptr<Vertex>& GetInVertex()  { return Vin; }
+        unique_ptr<Vertex>& GetOutVertex() { return Vout; }
+
         void SetLineType(const string& lt);
         string GetLineType() const { return line_type; }
 

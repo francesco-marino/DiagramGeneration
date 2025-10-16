@@ -60,6 +60,7 @@ class LabeledDiagram: public Diagram {
 
         virtual void Cleanup();
         int GetNumberOfLines() const;
+        int GetNumberOfHoleLines() const;
         void GetNumberOfPhLines(int &nh, int &np) const;
         void PrintLines() const;
 
@@ -70,6 +71,7 @@ class LabeledDiagram: public Diagram {
         int n_particle_lines, n_hole_lines;
 
         string GetInternalLinesString() const;
+        virtual int CountLoops() const;
 
         virtual void ListLines();
         virtual void AssignLinesToVertices();

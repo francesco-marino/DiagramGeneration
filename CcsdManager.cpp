@@ -70,8 +70,6 @@ void CcsdManager::ConstructCcsdDiagrams(int trunc_level, bool include_3n, bool i
                 this->AssignVertices(Vertices);
                 this->CoupledClusterDiagramManager::Build(true);
 
-                cout << "NOW we have " << GetNumberOfDiagrams() << endl;
-
             }   //
 
         }   // Hamiltonian

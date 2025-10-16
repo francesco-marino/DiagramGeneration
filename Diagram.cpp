@@ -71,6 +71,7 @@ void Diagram::Cleanup() {
     has_Hvertex = false;
     pos_Hvertex = -1;
     pos_virtual_vertex = -1;
+    nloops = 0;
     built = false;
     skeleton_structure.clear();
     directed_graph.reset();
@@ -126,6 +127,7 @@ bool Diagram::GetConnectivity(const IntMat &adj)  {
 }
 
 
+
 void Diagram::GetConnectivity()  {
     is_connected = GetConnectivity(adjacency_matrix);
     return;
@@ -150,6 +152,7 @@ void Diagram::Print() const {
     std::cout << "Diagram Type: " << GetType() << "\n";
     std::cout << "Order : " << GetPerturbativeOrder() << "\n";
     std::cout << "List of Vertices: " << GetVertexString() << "\n";
+    std::cout << "N. loops : " << nloops << "\n";
     std::cout << "Is Connected: " << (is_connected ? "Yes" : "No") << "\n";
     std::cout << "Adjacency Matrix:\n";
     adjacency_matrix.print();
