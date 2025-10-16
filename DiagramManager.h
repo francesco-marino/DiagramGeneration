@@ -30,6 +30,7 @@ class DiagramManager {
         void PrintMatrices() const;
         void Print() const;
         void SummarizeDiagrams() const;
+        virtual string GetLatexExpressions(bool show_ext=false) const;
 
         void ResetVertices() { vertices.clear(); }
         void Reset() { Cleanup(); }

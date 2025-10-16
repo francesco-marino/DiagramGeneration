@@ -70,9 +70,10 @@ int main() {
 
     CcsdManager ccsd;
     //ccsd.Build(3, false, true, 5);
-    ccsd.Build(2);
+    ccsd.Build(2, false, true);
     ccsd.SummarizeDiagrams();
     cout << ccsd.GetNumberOfDiagrams() << endl;
+    cout << ccsd.GetLatexExpressions(true) << endl;
     //ccsd.Print();
 
     unique_ptr<Diagram> & diag = ccsd.GetDiagram(30);
@@ -82,6 +83,7 @@ int main() {
     label.Process();
     label.Print();
     label.PrintLines();
+    cout << label.GetDiagramLatexExpression() << endl;
 
     Finalize();
     return 0;

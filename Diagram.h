@@ -34,6 +34,8 @@ class Diagram {
         void Build(const IntMat& mat) { BuildFromAdjacencyMatrix(mat); built = true;}
 
         virtual void Process();
+        virtual bool CanGenerateLatexExpr() const { return false; }
+        virtual string GetDiagramLatexExpression(bool show_ext=false) const {return "";};
 
         IntMat GetAdjacencyMatrix() const { return adjacency_matrix; }
 

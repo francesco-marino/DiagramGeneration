@@ -23,5 +23,6 @@ class CoupledClusterDiagram : public LabeledDiagram {
 
         void FindLineType() override;
         void AssignNamesToLines() override;
+        void FindDiagramExpression() override;
         // vector< vector<int> > FindEquivalentVertices(const vector< unique_ptr<Vertex> >& vertices_in) override { return LabeledDiagram::FindEquivalentVertices(vertices_in); }
 };

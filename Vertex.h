@@ -7,7 +7,11 @@ class Vertex {
 
     public:
         Vertex() { Init(0, 0, false); }
-        Vertex(int Nin, int Nout, bool virtual_flag=false, const std::string& name="", bool is_Hvertex=false) { Init(Nin, Nout, virtual_flag, is_Hvertex); SetName(name); }
+        Vertex(int Nin, int Nout, bool virtual_flag=false, const std::string& name="", bool is_Hvertex=false, const std::string& latex_name="x") { 
+            Init(Nin, Nout, virtual_flag, is_Hvertex); 
+            SetName(name);
+            SetLatexSymbol(latex_name);
+        }
         ~Vertex() {};
 
         virtual Vertex Copy() const;
@@ -20,8 +24,8 @@ class Vertex {
 
         void HamiltonianVertex() { is_Hvertex = true; }
 
-        std::string GetLatexSymbol() const { return latex_symbol; }
-        void SetLatexSymbol(const std::string& symbol) { latex_symbol = symbol; }
+        std::string GetLatexSymbol() const { return this->latex_symbol; }
+        void SetLatexSymbol(const std::string& symbol) { this->latex_symbol = symbol; }
         
         std::string GetName() const { return name; }
         void SetName(const std::string& name) { this->name = name; }
@@ -50,15 +54,15 @@ class Vertex {
 
 class V1bVertex : public Vertex {
     public:
-        V1bVertex() : Vertex(1, 1, false, "F", true) { };
+        V1bVertex() : Vertex(1, 1, false, "F", true) { SetLatexSymbol("f"); };
 };
 
 class V2bVertex : public Vertex {
     public:
-        V2bVertex() : Vertex(2, 2, false, "V", true) { };
+        V2bVertex() : Vertex(2, 2, false, "V", true) { SetLatexSymbol("v"); };
 };
 
 class V3bVertex : public Vertex {
     public:
-        V3bVertex() : Vertex(3, 3, false, "W", true) { };
+        V3bVertex() : Vertex(3, 3, false, "W", true) { SetLatexSymbol("w"); };
 };

@@ -15,21 +15,27 @@ class VertexWithLine : public Vertex {
     public:
 
         VertexWithLine();
-        VertexWithLine(int Nin, int Nout, bool virtual_flag=false, const std::string& name="", bool is_Hvertex=false);
+        VertexWithLine(int Nin, int Nout, bool virtual_flag=false, const std::string& name="", bool is_Hvertex=false, const std::string& latex_name="x");
         ~VertexWithLine() { Cleanup(); }
 
         void AddLine(Line& line, bool out);
         void AddLine(unique_ptr<Line>& line, bool out);
+        void AddLine(unique_ptr<Line>& line, int index, bool out);
         void AddLineIndex(int index, bool out);
 
         vector<int> GetOutLineIndeces() const { return out_line_ind; }
-        vector<int> GetInLineIndeces() const {  return in_line_ind; }
+        vector<int> GetInLineIndeces() const  { return in_line_ind; }
+
+        virtual string GetTensorName(const vector<unique_ptr<Line>> &lines) const;
 
         void Print() const;
 
     protected:
         vector< unique_ptr<Line> > out_lines, in_lines;
         vector<int> out_line_ind, in_line_ind;
+
+        string ListInIndeces(const vector<unique_ptr<Line>> &lines)  const;
+        string ListOutIndeces(const vector<unique_ptr<Line>> &lines) const;
 
         void Cleanup();
 };
@@ -49,6 +55,9 @@ class LabeledDiagram: public Diagram {
 
         virtual void Process();
 
+        virtual bool CanGenerateLatexExpr() const { return true; }
+        virtual string GetDiagramLatexExpression(bool show_ext=false) const;
+
         virtual void Cleanup();
         int GetNumberOfLines() const;
         void GetNumberOfPhLines(int &nh, int &np) const;
@@ -60,11 +69,13 @@ class LabeledDiagram: public Diagram {
 
         int n_particle_lines, n_hole_lines;
 
+        string GetInternalLinesString() const;
+
         virtual void ListLines();
         virtual void AssignLinesToVertices();
         virtual void FindLineType() = 0;
         virtual void AssignNamesToLines() = 0;
-        // virtual void FindDiagramExpression() = 0;
+        virtual void FindDiagramExpression() = 0;
 
     private:
 };

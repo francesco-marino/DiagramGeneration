@@ -1,4 +1,5 @@
 #include <iostream>
+#include <string>
 #include <vector>
 
 #include "DataStructures.h"
@@ -163,6 +164,16 @@ void DiagramManager::SummarizeDiagrams() const {
         diag->GetVertexString();
         std::cout << "\n";
     }
+}
+
+string DiagramManager::GetLatexExpressions(bool show_ext) const {
+    string tmp;
+    for (const auto& diag: diagrams) {
+        if (!diag->CanGenerateLatexExpr()) continue;
+        string tmp_expr = diag->GetDiagramLatexExpression(show_ext);
+        tmp += tmp_expr + "  \\\\ \n";
+    }
+    return tmp;
 }
 
 void DiagramManager::Cleanup() {

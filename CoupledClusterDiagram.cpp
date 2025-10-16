@@ -209,3 +209,8 @@ void CoupledClusterDiagram::AssignNamesToLines() {
     }
 
 }
+
+
+void CoupledClusterDiagram::FindDiagramExpression() {
+    
+}
