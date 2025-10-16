@@ -9,10 +9,12 @@ using std::endl;
 Line::Line() { Cleanup(); }
 
 Line::Line(const unique_ptr<Vertex>& Vin, const unique_ptr<Vertex>& Vout) {
+    Cleanup();
     AssignVertices(Vin, Vout);
 }
 
 Line::Line(const Vertex& Vin, const Vertex& Vout) {
+    Cleanup();
     AssignVertices(Vin, Vout);
 }
 
@@ -40,12 +42,23 @@ void Line::SetLineType(const string& lt) {
 }
 
 
+void Line::SetLineName(const string& ln) {
+    line_name = ln;
+    is_name_set = true;
+}
+
 void Line::Print() const {
     cout << GetString() << endl;
 }
 
 string Line::GetString() const {
-    string tmp = Vin->GetName() + " -> " + Vout->GetName();
+    string tmp = "";
+    if (is_name_set) {
+        string tmp_name = line_name;
+        if ( !this->IsExternalLine() ) tmp_name = "(" + tmp_name + ")";
+        tmp += tmp_name + " : ";
+    }
+    tmp += Vin->GetName() + " -> " + Vout->GetName();
     if (is_type_set) tmp += " (" +  line_type + ")";
     return tmp;
 }
@@ -55,4 +68,7 @@ void Line::Cleanup() {
     is_ext_line = false;
     towards_ext = false;
     is_type_set = false;
+    is_name_set = false;
+    Vin_index   = -1;
+    Vout_index  = -1;
 }

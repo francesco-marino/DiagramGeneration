@@ -10,6 +10,8 @@ class Vertex {
         Vertex(int Nin, int Nout, bool virtual_flag=false, const std::string& name="", bool is_Hvertex=false) { Init(Nin, Nout, virtual_flag, is_Hvertex); SetName(name); }
         ~Vertex() {};
 
+        virtual Vertex Copy() const;
+
         int GetNin() const { return Nin; }
         int GetNout() const { return Nout; }
         bool IsVirtual() const { return isvirtual; }

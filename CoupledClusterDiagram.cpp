@@ -112,33 +112,100 @@ std::string CoupledClusterDiagram::GetVertexString() const {
     return vstr;
 }
 
+
 void CoupledClusterDiagram::FindLineType() {
 
     int n_lines = GetNumberOfLines();
-    
-    vector<int> lines_to_visit;
-    for (int i=0; i<n_lines; ++i) lines_to_visit.push_back(i);
+    int n_vertices = GetNumberOfVertices();
 
-    while ( !lines_to_visit.empty() ) {
+    for (int vv=0; vv<n_vertices; ++vv) {
+        auto &vert = this->v_with_lines[vv];
+        vector<int> lout = vert->GetOutLineIndeces();
+        vector<int> lin  = vert->GetInLineIndeces();
 
-        cout << "Lines to visit : " << lines_to_visit.size() << std::endl;
-        for (int i=0; i<lines_to_visit.size(); ++i) {
-            int index  = lines_to_visit[i];
-            auto &line = lines[index];
-            string tp = "x";
+        if ( vert->IsAmplitude() || vert->IsVirtual() ) {
+            for (auto &ll : lout) { lines[ll]->SetLineType("p"); }
+            for (auto &ll : lin)  { lines[ll]->SetLineType("h"); }
+        }
+        
+    }
 
-            // First fix the external lines.
-            if ( line->IsExternalLine() ) {
-                tp = line->PointsToExtern() ? "p" : "h";
-            }
-            else {
-                cout << "Internal " << std::endl;
+    for (const auto& ll: lines) {
+        if (ll->GetLineType()=="p") ++n_particle_lines;
+        if (ll->GetLineType()=="h") ++n_hole_lines;
+    }
 
-            }
-            line->SetLineType(tp);
-            lines_to_visit.erase( lines_to_visit.begin()+i );
+
+    // DEBUG
+    for (auto &ll: lines) {
+        if (!ll->IsTypeSet()) {
+            cout << "TYPE NOT SET" << std::endl;
         }
     }
-    
+
+}
+
+
+int CoupledClusterDiagram::GetExcitationLevel() const {
+
+    int ext_level = 0;
+    if (pos_virtual_vertex>=0) ext_level = vertices[pos_virtual_vertex]->GetNout();    // Excitation level
+
+    return ext_level;
+}
+
+
+// TODO HERE    Think about moving back to LabeledDiagram
+void CoupledClusterDiagram::AssignNamesToLines() { 
+
+    int ext_level, np_lines, nh_lines, nvertices;
+    std::queue<string> p_names, h_names;
+
+    nvertices = GetNumberOfVertices();
+    ext_level= GetExcitationLevel();
+    GetNumberOfPhLines(nh_lines, np_lines);
+
+    p_names.push("a"); p_names.push("b"); p_names.push("c"); p_names.push("d"); p_names.push("e"); p_names.push("f"); p_names.push("g"); p_names.push("h");
+    h_names.push("i"); h_names.push("j"); h_names.push("k"); h_names.push("l"); h_names.push("m"); h_names.push("n"); h_names.push("o"); h_names.push("p");
+
+    // Start from the external vertex.
+    // Line that go OUT are HOLES. 
+    // Line that go IN  are PARTICLES. 
+    if (ext_level > 0) {
+        auto &ext_vertex = v_with_lines[pos_virtual_vertex];
+
+        for (auto ind_p : ext_vertex->GetInLineIndeces() ) {
+            auto & ll_p = lines[ind_p];
+            ll_p->SetLineName( p_names.front() );
+            p_names.pop();
+        }
+        for (auto ind_h : ext_vertex->GetOutLineIndeces() ) {
+            auto & ll_h = lines[ind_h];
+            ll_h->SetLineName( h_names.front() );
+            h_names.pop();
+        }
+
+    }
+
+    // Now iterate over amplitude.
+    // Now OUT lines are PARTICLES and IN lines are HOLES.
+    for (int ii=0; ii<nvertices; ++ii) {
+        auto &ampl = v_with_lines[ii];
+        if ( !ampl->IsAmplitude() ) continue;
+
+        for (auto ind_p : ampl->GetOutLineIndeces() ) {
+            auto & ll_p = lines[ind_p];
+            if ( ll_p->IsNameSet() ) continue;
+            ll_p->SetLineName( p_names.front() );
+            p_names.pop();
+        }
+        for (auto ind_h : ampl->GetInLineIndeces() ) {
+            auto & ll_h = lines[ind_h];
+            if ( ll_h->IsNameSet() ) continue;
+            ll_h->SetLineName( h_names.front() );
+            h_names.pop();
+        }
+
+    }
 
 }

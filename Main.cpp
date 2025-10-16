@@ -75,7 +75,7 @@ int main() {
     cout << ccsd.GetNumberOfDiagrams() << endl;
     //ccsd.Print();
 
-    unique_ptr<Diagram> & diag = ccsd.GetDiagram(10);
+    unique_ptr<Diagram> & diag = ccsd.GetDiagram(30);
     CoupledClusterDiagram label(diag->GetAdjacencyMatrix(), diag->GetVertices());
     cout << "\n\n";
     label.Build();
