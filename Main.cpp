@@ -9,6 +9,7 @@
 #include "DiagramManager.h"
 #include "LabeledDiagram.h"
 #include "MbptDiagramManager.h"
+#include "PairingModel.h"
 #include "Parallel.h"
 #include "Vertex.h"
 
@@ -20,23 +21,45 @@ int main() {
     int ntasks, rank;
     Initialize();
     GetRank(ntasks, rank);
-    
-    CcsdManager ccsd;
-    //ccsd.Build(3, false, true, 5);
-    ccsd.Build(2, false, false);
-    ccsd.SummarizeDiagrams();
-    cout << ccsd.GetNumberOfDiagrams() << endl;
-    cout << ccsd.GetLatexExpressions(true) << endl;
-    //ccsd.Print();
 
-    unique_ptr<Diagram> & diag = ccsd.GetDiagram(0);
-    CoupledClusterDiagram label(diag->GetAdjacencyMatrix(), diag->GetVertices());
-    cout << "\n\n";
-    label.Build();
-    label.Process();
-    label.Print();
-    label.PrintLines();
-    cout << label.GetDiagramLatexExpression() << endl;
+    bool test_diagrams = false;
+    bool test_pairing_model = true;
+    
+    if (test_diagrams) {
+        CcsdManager ccsd;
+        //ccsd.Build(3, false, true, 5);
+        ccsd.Build(2, false, false);
+        ccsd.SummarizeDiagrams();
+        cout << ccsd.GetNumberOfDiagrams() << endl;
+        cout << ccsd.GetLatexExpressions(true) << endl;
+        //ccsd.Print();
+
+        unique_ptr<Diagram> & diag = ccsd.GetDiagram(0);
+        CoupledClusterDiagram label(diag->GetAdjacencyMatrix(), diag->GetVertices());
+        cout << "\n\n";
+        label.Build();
+        label.Process();
+        label.Print();
+        label.PrintLines();
+        cout << label.GetDiagramLatexExpression() << endl;
+    }
+
+    if (test_pairing_model) {
+        cout << "Testing the pairing model" << endl;
+        PairingModel model;
+        model.SetParams(4, 4, 1., 1.);
+        model.Build();
+        cout << model.IsBuilt() << endl;
+        model.PrintBasis();
+
+        double ehf = model.GetRefEnergy();
+        double e2 = model.GetMbpt2();
+        cout << "HF : " << ehf << endl;
+        cout << "Analytical : " << model.GetMbpt2Analytical() << endl;
+        cout << "Numerical : " << e2 << "  " << ehf+e2 << endl;
+        double e3 = model.GetMbpt3();
+        cout << "E3 : " << e2+e3 << endl;
+    }
 
     Finalize();
     return 0;
