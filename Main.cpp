@@ -23,13 +23,13 @@ int main() {
     
     CcsdManager ccsd;
     //ccsd.Build(3, false, true, 5);
-    ccsd.Build(2, false, true);
+    ccsd.Build(2, false, false);
     ccsd.SummarizeDiagrams();
     cout << ccsd.GetNumberOfDiagrams() << endl;
     cout << ccsd.GetLatexExpressions(true) << endl;
     //ccsd.Print();
 
-    unique_ptr<Diagram> & diag = ccsd.GetDiagram(12);
+    unique_ptr<Diagram> & diag = ccsd.GetDiagram(0);
     CoupledClusterDiagram label(diag->GetAdjacencyMatrix(), diag->GetVertices());
     cout << "\n\n";
     label.Build();

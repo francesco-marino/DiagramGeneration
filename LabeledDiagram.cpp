@@ -115,6 +115,7 @@ void LabeledDiagram::Process() {
     this->AssignNamesToLines();
     this->FindDiagramExpression();
     this->nloops = this->CountLoops();
+    this->symmetry_factor = this->FindSymmetryFactor();
 }
 
 string LabeledDiagram::GetInternalLinesString() const {
@@ -139,6 +140,9 @@ string LabeledDiagram::GetDiagramLatexExpression(bool show_ext) const {
     string tmp = "";
     int sign = ( nloops + this->GetNumberOfHoleLines() )%2;
     
+    string sym = "";
+    if (this->symmetry_factor>1) { sym = "\\frac{1}{" + std::to_string(symmetry_factor) + "} "; }
+    
     string Hvert_name = (pos_Hvertex>=0) ? v_with_lines[pos_Hvertex]->GetTensorName(lines) : "";
     string int_lines = GetInternalLinesString();
 
@@ -159,6 +163,7 @@ string LabeledDiagram::GetDiagramLatexExpression(bool show_ext) const {
         tmp += " " + vert->GetTensorName(lines);
     }
     tmp += " " + Hvert_name;
+    tmp = sym + tmp;
     if (sign==1)  tmp = "- " + tmp;
     if (show_ext) tmp = ext + tmp;
 

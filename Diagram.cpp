@@ -72,6 +72,7 @@ void Diagram::Cleanup() {
     pos_Hvertex = -1;
     pos_virtual_vertex = -1;
     nloops = 0;
+    symmetry_factor = 1;
     built = false;
     skeleton_structure.clear();
     directed_graph.reset();
@@ -131,6 +132,25 @@ bool Diagram::GetConnectivity(const IntMat &adj)  {
 void Diagram::GetConnectivity()  {
     is_connected = GetConnectivity(adjacency_matrix);
     return;
+}
+
+int Diagram::FindSymmetryFactor() const {
+    int sym_factor = 1;
+    int n = adjacency_matrix.n_cols;
+
+    vector<int> factorials = {1, 1, 2, 6, 24, 120, 720};
+
+    // Count equivalent internal lines
+    for (int i=0; i<n; ++i) {
+        for (int j=0; j<n; ++j) {
+            if ( vertices[i]->IsVirtual() || vertices[j]->IsVirtual() ) continue;
+            int ad = adjacency_matrix.at(i,j);
+            if (ad>=2) {
+                sym_factor *= factorials[ad];
+            }
+        } 
+    }
+    return sym_factor;
 }
 
 int Diagram::GetPerturbativeOrder() const { 

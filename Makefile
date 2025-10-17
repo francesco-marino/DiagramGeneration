@@ -51,8 +51,8 @@ MbptDiagram.o: MbptDiagram.cpp Diagram.o
 
 DiagramManager.o: DiagramManager.cpp Diagram.o Vertex.o
 
-LabeledDiagram.o : LabeledDiagram.cpp Diagram.o Line.o
-Diagram.o: Diagram.cpp Vertex.o Graph.o
+LabeledDiagram.o : LabeledDiagram.cpp LabeledDiagram.h Diagram.o Line.o
+Diagram.o: Diagram.cpp Diagram.h Vertex.o Graph.o
 
 Line.o: Line.cpp
 Vertex.o: Vertex.cpp
