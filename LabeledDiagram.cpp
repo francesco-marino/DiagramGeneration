@@ -34,6 +34,8 @@ void VertexWithLine::AddLine(unique_ptr<Line>& line, int index, bool out) {
 void VertexWithLine::AddLineIndex(int index, bool out) {
     if (out)    out_line_ind.push_back(index);
     if (!out)   in_line_ind.push_back(index);
+    Nin  = in_line_ind.size();
+    Nout = out_line_ind.size();
 }
 
 void VertexWithLine::Print() const {
@@ -113,7 +115,6 @@ void LabeledDiagram::Process() {
     this->AssignLinesToVertices();
     this->FindLineType();
     this->AssignNamesToLines();
-    this->FindDiagramExpression();
     this->nloops = this->CountLoops();
     this->symmetry_factor = this->FindSymmetryFactor();
 }
@@ -159,7 +160,8 @@ string LabeledDiagram::GetDiagramLatexExpression(bool show_ext) const {
 
     tmp =  tmp_sum;
     for (const auto& vert : v_with_lines) {
-        if ( !vert->IsAmplitude() ) continue;
+        if (GetType()=="CC" && !vert->IsAmplitude() ) continue;
+        // TODO HERE Add mbpt energy denominators
         tmp += " " + vert->GetTensorName(lines);
     }
     tmp += " " + Hvert_name;
@@ -220,8 +222,6 @@ void LabeledDiagram::AssignLinesToVertices() {
         v_with_lines[vout]->AddLineIndex(ll, false);
         v_with_lines[vin]->AddLineIndex( ll, true);
     }
-
-    // for (auto &vwl: v_with_lines) vwl->Print();
 
     return;
 }

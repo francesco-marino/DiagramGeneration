@@ -62,7 +62,7 @@ class DiagramManager {
 
         virtual void PostProcessDiagrams() = 0; // TODO HERE Change name
 
-        void Cleanup();
+        virtual void Cleanup();
        
      private:
 

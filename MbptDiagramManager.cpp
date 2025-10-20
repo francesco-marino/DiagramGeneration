@@ -52,3 +52,31 @@ void MbptDiagramManager::PostProcessDiagrams() {
 
     return;
 }
+
+
+void MbptDiagramManager::Build(bool only_connected) {
+    if (!is_order_set || order<2) return;
+    for (int n=2; n<=order; ++n) {
+        this->BuildDiagramsAtOrderN(n);
+    }
+    return;
+}
+
+void MbptDiagramManager::BuildDiagramsAtOrderN(int n) {
+
+    vector< Vertex > Vertices;
+    for (int cc=0; cc<n; ++cc) {
+        Vertices.push_back( V2bVertex() );
+    }
+    this->ResetVertices();
+    this->AssignVertices(Vertices);
+    this->DiagramManager::Build(true);
+
+}
+
+
+void MbptDiagramManager::Cleanup() {
+    DiagramManager::Cleanup();
+    is_order_set = false;
+    order = 0;
+}

@@ -22,10 +22,19 @@ int main() {
     Initialize();
     GetRank(ntasks, rank);
 
-    bool test_diagrams = false;
-    bool test_pairing_model = true;
+    bool test_diagrams = true;
+    bool test_pairing_model = false;
     
     if (test_diagrams) {
+
+        MbptDiagramManager mbpt;
+        mbpt.SetMbptOrder(3);
+        mbpt.Build();
+        mbpt.SummarizeDiagrams();
+        cout << mbpt.GetNumberOfDiagrams() << endl;
+        cout << mbpt.GetLatexExpressions(true) << endl;
+        cout << "\n\n\n";
+
         CcsdManager ccsd;
         //ccsd.Build(3, false, true, 5);
         ccsd.Build(2, false, false);
