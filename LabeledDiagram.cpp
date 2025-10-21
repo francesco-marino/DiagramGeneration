@@ -11,25 +11,12 @@ using std::cout;
 using std::endl;
 using std::string;
 
-VertexWithLine::VertexWithLine() : Vertex() {}
+VertexWithLine::VertexWithLine() : Vertex() { this->Cleanup(); }
 
 VertexWithLine::VertexWithLine(int Nin, int Nout, bool virtual_flag, const std::string& name, bool is_Hvertex, const std::string& latex_name) : 
-    Vertex(Nin, Nout, virtual_flag, name, is_Hvertex, latex_name) {}
-
-void VertexWithLine::AddLine(Line& line, bool out) {
-    if (out)   out_lines.push_back( make_unique<Line>(std::move(line)) );
-    if (!out)  in_lines.push_back(  make_unique<Line>(std::move(line)) );
-}
-
-void VertexWithLine::AddLine(unique_ptr<Line>& line, bool out) {
-    if (out)   out_lines.push_back( std::move(line) );
-    if (!out)  in_lines.push_back(  std::move(line) );
-}
-
-void VertexWithLine::AddLine(unique_ptr<Line>& line, int index, bool out) {
-    this->AddLine(line, out);
-    this->AddLineIndex(index, out);
-}
+    Vertex(Nin, Nout, virtual_flag, name, is_Hvertex, latex_name) {
+    this->Cleanup();
+    }
 
 void VertexWithLine::AddLineIndex(int index, bool out) {
     if (out)    out_line_ind.push_back(index);
@@ -80,8 +67,6 @@ string VertexWithLine::GetTensorName(const vector<unique_ptr<Line>> &lines) cons
 }
 
 void VertexWithLine::Cleanup() {
-    out_lines.clear();
-    in_lines.clear();
     out_line_ind.clear();
     in_line_ind.clear();
 }
@@ -98,14 +83,6 @@ LabeledDiagram::LabeledDiagram(const IntMat& mat, const vector<Vertex>& vertices
 }
 
 LabeledDiagram::LabeledDiagram(const IntMat& mat, const vector< unique_ptr<Vertex> >& vertices_in) : Diagram(mat, vertices_in) { 
-}
-
-void LabeledDiagram::AddLine(Line& line) {
-    lines.push_back( make_unique<Line>( std::move(line) ) );
-}
-
-void LabeledDiagram::AddLine(unique_ptr<Line>& line) {
-    lines.push_back( std::move(line) );
 }
 
 
@@ -169,7 +146,6 @@ string LabeledDiagram::GetDiagramLatexExpression(bool show_ext) const {
     if (sign==1)  tmp = "- " + tmp;
     if (show_ext) tmp = ext + tmp;
 
-    //cout << "HERE " << nloops << "  " << GetNumberOfHoleLines() << endl;
     return tmp;
 
 }
@@ -291,15 +267,6 @@ int LabeledDiagram::CountLoops() const {
                         lines_visited[il3] = true;
                         lines_visited[il4] = true;
 
-                        /*
-                        cout << "Closed path " 
-                            << lines[il1]->GetLineName() << " "
-                            << lines[il2]->GetLineName() << " "
-                            << lines[il3]->GetLineName() << " "
-                            << lines[il4]->GetLineName() << " "
-                            << endl;
-                        */
-
                         ++nloops;
                         break;
                     } 
@@ -350,6 +317,7 @@ void LabeledDiagram::Cleanup() {
     Diagram::Cleanup();
     lines.clear();
     v_with_lines.clear();
+    energy_denoms.clear();
     n_particle_lines = 0;
     n_hole_lines = 0;
 }

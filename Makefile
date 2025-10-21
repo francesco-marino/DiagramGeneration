@@ -25,7 +25,8 @@ fortran_objects =
 cpp_objects = Main.o ${mbpt_objects} ${cc_objects} \
 	DataStructures.o AdjacencyMatrix.o LabeledDiagram.o Line.o Vertex.o \
 	SpBasis.o PairingModel.o \
-	DiagramManager.o Diagram.o Graph.o Parallel.o
+	DiagramManager.o Diagram.o Graph.o Parallel.o \
+	DeterministicDiagram.o
 
 %.o: %.f
 	$(FC) $(FFLAGS_ALL) -c $<
@@ -42,14 +43,16 @@ all: Exe
 Exe: $(fortran_objects) $(cpp_objects)
 	$(CXX) $(CXXFLAGS_ALL) -o $(EXE).exe $(fortran_objects) $(cpp_objects) $(LINK)
 
-Main.o: Main.cpp AdjacencyMatrix.o DataStructures.o DiagramManager.o MbptDiagramManager.o CcsdManager.o
+Main.o: Main.cpp AdjacencyMatrix.o DataStructures.o DiagramManager.o MbptDiagramManager.o CcsdManager.o DeterministicDiagram.o
+
+DeterministicDiagram.o : DeterministicDiagram.cpp DeterministicDiagram.h LabeledDiagram.o SpBasis.o
 
 CcsdManager.o: CcsdManager.cpp CoupledClusterDiagramManager.o
 CoupledClusterDiagramManager.o: CoupledClusterDiagramManager.cpp CoupledClusterDiagram.o  Diagram.o Vertex.o
 CoupledClusterDiagram.o: CoupledClusterDiagram.cpp Diagram.o Vertex.o
 
-MbptDiagramManager.o: MbptDiagramManager.cpp DiagramManager.o MbptDiagram.o
-MbptDiagram.o: MbptDiagram.cpp Diagram.o
+MbptDiagramManager.o: MbptDiagramManager.cpp DiagramManager.o MbptDiagram.o 
+MbptDiagram.o: MbptDiagram.cpp Diagram.o DeterministicDiagram.o
 
 DiagramManager.o: DiagramManager.cpp Diagram.o Vertex.o
 

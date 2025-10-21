@@ -8,9 +8,7 @@ class Vertex {
     public:
         Vertex() { Init(0, 0, false); }
         Vertex(int Nin, int Nout, bool virtual_flag=false, const std::string& name="", bool is_Hvertex=false, const std::string& latex_name="x") { 
-            Init(Nin, Nout, virtual_flag, is_Hvertex); 
-            SetName(name);
-            SetLatexSymbol(latex_name);
+            Init(Nin, Nout, virtual_flag, is_Hvertex, name, latex_name); 
         }
         ~Vertex() {};
 
@@ -43,11 +41,13 @@ class Vertex {
         std::string latex_symbol;
         bool is_Hvertex;
 
-        void Init(int Nin, int Nout, bool virtual_flag=false, bool is_Hvertex=false) {
+        void Init(int Nin, int Nout, bool virtual_flag=false, bool is_Hvertex=false,  const std::string& name="", const std::string& latex_name="x") {
             this->Nin = Nin;
             this->Nout = Nout;
             this->isvirtual = virtual_flag;
             this->is_Hvertex = is_Hvertex;
+            this->name = name;
+            this->latex_symbol = latex_name;
         }
 
 };

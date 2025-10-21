@@ -18,9 +18,6 @@ class VertexWithLine : public Vertex {
         VertexWithLine(int Nin, int Nout, bool virtual_flag=false, const std::string& name="", bool is_Hvertex=false, const std::string& latex_name="x");
         ~VertexWithLine() { Cleanup(); }
 
-        void AddLine(Line& line, bool out);
-        void AddLine(unique_ptr<Line>& line, bool out);
-        void AddLine(unique_ptr<Line>& line, int index, bool out);
         void AddLineIndex(int index, bool out);
 
         vector<int> GetOutLineIndeces() const { return out_line_ind; }
@@ -29,15 +26,13 @@ class VertexWithLine : public Vertex {
         virtual string GetTensorName(const vector<unique_ptr<Line>> &lines) const;
 
         void Print() const;
+        virtual void Cleanup();
 
     protected:
-        vector< unique_ptr<Line> > out_lines, in_lines;
         vector<int> out_line_ind, in_line_ind;
 
         string ListInIndeces(const vector<unique_ptr<Line>> &lines)  const;
         string ListOutIndeces(const vector<unique_ptr<Line>> &lines) const;
-
-        void Cleanup();
 };
 
 
@@ -49,9 +44,6 @@ class LabeledDiagram: public Diagram {
         LabeledDiagram(const IntMat& mat);
         LabeledDiagram(const IntMat& mat, const vector<Vertex>& vertices_in);
         LabeledDiagram(const IntMat& mat, const vector< unique_ptr<Vertex> >& vertices_in);
-
-        void AddLine(unique_ptr<Line>& line);
-        void AddLine(Line& line);
 
         virtual void Process();
 
@@ -67,6 +59,7 @@ class LabeledDiagram: public Diagram {
     protected:
         vector< unique_ptr<Line> > lines;
         vector< unique_ptr<VertexWithLine> > v_with_lines;
+        vector< unique_ptr<VertexWithLine> > energy_denoms;
 
         int n_particle_lines, n_hole_lines;
 

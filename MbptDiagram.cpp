@@ -153,10 +153,6 @@ void MbptDiagram::CheckIsValid() {
     return;
 }
 
-void MbptDiagram::Cleanup() {
-    LabeledDiagram::Cleanup();
-    energy_denoms.clear();
-}
 
 
 void MbptDiagram::Print() const {

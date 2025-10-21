@@ -11,6 +11,17 @@ PairingModel::PairingModel() : SpBasis() {
     Cleanup();
 }
 
+bool PairingModel::CheckNonZero(int i1, int i2) const {
+    bool tmp = true;
+    if (i1!=i2) { tmp=false; }
+    return tmp;
+}
+
+Num PairingModel::ComputeF(int i1, int i2) const {
+    if (!CheckNonZero(i1,i2)) return 0.;
+    return this->hf_energies[i1];
+}
+
 bool PairingModel::CheckNonZero(int i1, int i2, int i3, int i4) const {
     bool tmp = SpBasis::CheckNonZero(i1, i2, i3, i4);
     if (!tmp) return false;
@@ -224,4 +235,5 @@ void PairingModel::Cleanup() {
     A = D = 0;
     spin.clear();
     level.clear();
+    name = "PairingModel";
 }

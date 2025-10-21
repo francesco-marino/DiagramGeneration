@@ -7,7 +7,7 @@
 #include "MbptDiagram.h"
 #include "Vertex.h"
 
-class MbptDiagramManager : public DiagramManager {
+class MbptDiagramManager : public DeterministicDiagramManager {
     // Manages the generation and storage of MBPT diagrams using adjacency matrices
 
     public:
@@ -17,7 +17,7 @@ class MbptDiagramManager : public DiagramManager {
 
         virtual void Build(bool only_connected=true);
         void SetMbptOrder(int ord) { order = ord; is_order_set = true;}
-        
+
     protected:
 
         int order;

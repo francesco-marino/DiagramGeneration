@@ -47,6 +47,11 @@ void Line::SetLineName(const string& ln) {
     is_name_set = true;
 }
 
+int Line::GetSpIndex() const {
+    int tmp = (sp_index_set) ? sp_index : -1;
+    return tmp;
+}
+
 void Line::Print() const {
     cout << GetString() << endl;
 }
@@ -62,6 +67,7 @@ string Line::GetString() const {
     if (is_type_set) tmp += " (" +  line_type + ")";
     return tmp;
 }
+
 void Line::Cleanup() {
     Vin.reset();
     Vout.reset();
@@ -71,4 +77,6 @@ void Line::Cleanup() {
     is_name_set = false;
     Vin_index   = -1;
     Vout_index  = -1;
+    sp_index_set = false;
+    sp_index = -1;
 }

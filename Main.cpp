@@ -6,6 +6,7 @@
 #include "CoupledClusterVertex.h"
 #include "CcsdManager.h"
 #include "DataStructures.h"
+#include "DeterministicDiagram.h"
 #include "DiagramManager.h"
 #include "LabeledDiagram.h"
 #include "MbptDiagramManager.h"
@@ -22,8 +23,9 @@ int main() {
     Initialize();
     GetRank(ntasks, rank);
 
-    bool test_diagrams = true;
+    bool test_diagrams = false;
     bool test_pairing_model = false;
+    bool test_evaluation = true;
     
     if (test_diagrams) {
 
@@ -69,6 +71,42 @@ int main() {
         double e3 = model.GetMbpt3();
         cout << "E3 : " << e2+e3 << endl;
     }
+
+    if (test_evaluation) {
+        cout << "Testing the pairing model" << endl;
+        unique_ptr<PairingModel> model = make_unique<PairingModel>();
+        model->SetParams(4, 4, 1., 1.);
+        model->Build();
+        double ehf = model->GetRefEnergy();
+        double e2 = model->GetMbpt2();
+        double e3 = model->GetMbpt3();
+        cout << "HF : " << ehf << endl;
+        cout << "Numerical : " << e2 << "  " << ehf+e2 << endl;
+        cout << "E3 : " << e3 << "  " << e2+e3 << endl;
+
+        MbptDiagramManager mbpt;
+        mbpt.SetMbptOrder(4);
+        mbpt.Build();
+        std::shared_ptr<SpBasis> basePtr = std::move(model);
+        mbpt.SetSpBasis(basePtr);
+        vector<double> results = mbpt.Compute();
+        double sum = 0.;
+        for (int i=0; i<results.size(); ++i) {
+            sum += results[i];
+            cout << "Diagram " << i << " contribution: " << results[i] << endl;
+        }
+        cout << "Total contribution from MBPT diagrams at order 3: " << sum << endl;
+
+        unique_ptr<Diagram> & diag = mbpt.GetDiagram(0);
+        MbptDiagram mbpt_diag(diag->GetAdjacencyMatrix(), diag->GetVertices());
+        mbpt_diag.SetSpBasis( basePtr );
+        mbpt_diag.Build();
+        mbpt_diag.Process();
+        double res = mbpt_diag.Compute();
+        //cout << "Result : " << res << endl;
+
+    }
+
 
     Finalize();
     return 0;

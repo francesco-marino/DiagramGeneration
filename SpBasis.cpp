@@ -25,6 +25,18 @@ double SpBasis::GetEnergyDenom(int i, int j, int a, int b) const {
     return res;   
 }
 
+double SpBasis::GetEnergyDenom(int i, int a) const {
+    if ( !CheckNonZero(i,a) ) return 0.;
+    double res = hf_energies[i] - hf_energies[a];
+    return res;   
+}
+
+double SpBasis::GetEnergyDenom(int i, int j, int k, int a, int b, int c) const {
+    double res = hf_energies[i] + hf_energies[j] + hf_energies[k] - hf_energies[a] - hf_energies[b] - hf_energies[c];
+    return res;   
+}
+
+
 double SpBasis::GetRefEnergy() const {
     
     if (!hf_done) return 0.;
@@ -39,6 +51,20 @@ double SpBasis::GetRefEnergy() const {
     return ehf_tot;
 }
 
+double SpBasis::GetSpEnergy(int isp) const {
+    if (isp<0 || isp>=nstates) return 0.;
+    return hf_energies[isp];
+}
+
+
+// TODO HERE Implement for real
+bool SpBasis::CheckNonZero(int i1, int i2) const {
+    if (!is_built) return false;
+    if (i1<0 || i1>=nstates) return false;
+    if (i2<0 || i2>=nstates) return false;
+    return true;
+}
+
 bool SpBasis::CheckNonZero(int i1, int i2, int i3, int i4) const {
     if (!is_built) return false;
     if (i1<0 || i1>=nstates) return false;
@@ -48,6 +74,22 @@ bool SpBasis::CheckNonZero(int i1, int i2, int i3, int i4) const {
     if (i1==i2 || i3==i4)    return false;
     return true;
 }
+
+vector<int> SpBasis::FindCompatibleStates(int i1, int i2, int i3, string type) const {
+    int start = 0;
+    int end   = this->nstates;
+    vector<int> results;
+
+    if      ("h"==type) { start = 0;      end = nholes; }
+    else if ("p"==type) { start = nholes; end = nstates; }
+
+    for (int cc=start; cc<end; ++cc) {
+        if ( !CheckNonZero(i1, i2, i3, cc) ) continue;
+        results.push_back(cc);
+    } 
+    return results;
+}
+
 
 Num SpBasis::ComputeV(int i1, int i2, int i3, int i4) const {
     if ( !CheckNonZero(i1,i2,i3,i4) ) return 0.;
@@ -72,6 +114,7 @@ void SpBasis::PrintBasis() const {
 }
 
 void SpBasis::Cleanup() {
+    name = "Core SpBasis";
     nstates = 0;
     nholes  = 0;
     is_built = false;

@@ -200,3 +200,4 @@ void DiagramManager::Test(int order, bool print/*=true*/) {
     if (print && 0==rank) this->Print();
     return;
 }
+

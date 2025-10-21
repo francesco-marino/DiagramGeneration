@@ -74,7 +74,6 @@ void MbptDiagramManager::BuildDiagramsAtOrderN(int n) {
 
 }
 
-
 void MbptDiagramManager::Cleanup() {
     DiagramManager::Cleanup();
     is_order_set = false;

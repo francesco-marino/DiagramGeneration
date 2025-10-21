@@ -18,6 +18,9 @@ class PairingModel : public SpBasis {
 
     protected:
 
+        virtual Num ComputeF(int i1, int i2) const;
+        virtual bool CheckNonZero(int i1, int i2) const;
+
         Num ComputeV(int i1, int i2, int i3, int i4) const override;
         bool CheckNonZero(int i1, int i2, int i3, int i4) const override;
 

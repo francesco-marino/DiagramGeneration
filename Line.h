@@ -35,6 +35,9 @@ class Line {
         void SetLineName(const string& ln);
         string GetLineName() const { return line_name; }
 
+        void SetSpIndex(int isp) { sp_index=isp; sp_index_set=true; }
+        int GetSpIndex() const;
+
     protected:
     
         unique_ptr<Vertex> Vin, Vout;
@@ -46,6 +49,9 @@ class Line {
         string line_name;
         bool is_type_set;
         bool is_name_set;
+
+        int sp_index;
+        bool sp_index_set;
 
         void AssignVertices(const Vertex& Vin, const Vertex& Vout);
         void AssignVertices(const unique_ptr<Vertex>& Vin, const unique_ptr<Vertex>& Vout);

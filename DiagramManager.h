@@ -7,6 +7,7 @@
 #include "DataStructures.h"
 #include "Diagram.h"
 #include "Parallel.h"
+#include "SpBasis.h"
 #include "Vertex.h"
 
 using std::vector; 
@@ -47,7 +48,7 @@ class DiagramManager {
     protected:
 
         int rank, ntasks;
-
+        
         vector< unique_ptr<Vertex> > vertices;
         vector< unique_ptr<Diagram> > diagrams;
         vector<IntMat> adjacency_matrices;
