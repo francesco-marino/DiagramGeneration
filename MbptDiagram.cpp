@@ -8,7 +8,7 @@ using std::endl;
 
 
 void MbptDiagram::Process() {
-    LabeledDiagram::Process();
+    DeterministicDiagram::Process();
     this->FindEnergyDenoms();
 }
 

@@ -22,6 +22,7 @@ class VertexWithLine : public Vertex {
 
         vector<int> GetOutLineIndeces() const { return out_line_ind; }
         vector<int> GetInLineIndeces() const  { return in_line_ind; }
+        vector<int> GetLineIndeces() const;
 
         virtual string GetTensorName(const vector<unique_ptr<Line>> &lines) const;
 
@@ -30,6 +31,7 @@ class VertexWithLine : public Vertex {
 
     protected:
         vector<int> out_line_ind, in_line_ind;
+        vector<int> all_lines_indeces;
 
         string ListInIndeces(const vector<unique_ptr<Line>> &lines)  const;
         string ListOutIndeces(const vector<unique_ptr<Line>> &lines) const;
@@ -45,7 +47,7 @@ class LabeledDiagram: public Diagram {
         LabeledDiagram(const IntMat& mat, const vector<Vertex>& vertices_in);
         LabeledDiagram(const IntMat& mat, const vector< unique_ptr<Vertex> >& vertices_in);
 
-        virtual void Process();
+        virtual void Process() override;
 
         virtual bool CanGenerateLatexExpr() const { return true; }
         virtual string GetDiagramLatexExpression(bool show_ext=false) const;

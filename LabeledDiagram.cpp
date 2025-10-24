@@ -53,6 +53,14 @@ string VertexWithLine::ListInIndeces(const vector<unique_ptr<Line>> &lines) cons
     return tmp;
 }
 
+vector<int> VertexWithLine::GetLineIndeces() const {
+    vector<int> lines_out;
+    for (int ll : out_line_ind) { lines_out.push_back(ll); }
+    for (int ll : in_line_ind)  { lines_out.push_back(ll); }
+    return lines_out;
+}
+
+
 //
 // Get the name of the object with proper in/out indeces.
 //
@@ -328,6 +336,7 @@ void LabeledDiagram::GetNumberOfPhLines(int &nh, int &np) const {
     np = this->n_particle_lines;
     return;
 }
+
 
 vector< vector<int> > LabeledDiagram::FindEquivalentLines() {
     

@@ -118,9 +118,26 @@ void DeterministicDiagram::Init(const shared_ptr<SpBasis> &spbasis_in) {
 
 }
 
+void DeterministicDiagram::PrepareComputableVertices() {
+    int nvertices = v_with_lines.size();
+    for (int iv=0; iv<nvertices; ++iv) {
+        unique_ptr<ComputableVertex> vert = make_unique<ComputableVertex>();
+        vert->BuildFromVertex( v_with_lines[iv] );
+        vert->SetSpBasis( spbasis );
+        computable_vertices.push_back( std::move(vert) );
+    }
+    comp_vertices_ready = true;
+    return;
+}
+
+void DeterministicDiagram::Process() {
+    LabeledDiagram::Process();
+}
+
 Num DeterministicDiagram::Compute() {
 
     if (!IsBuilt()) return -1;
+    // if (!comp_vertices_ready) this->PrepareComputableVertices();
 
     int nlines = lines.size();
     int nvertices = v_with_lines.size();
@@ -261,9 +278,17 @@ Num DeterministicDiagram::EvalOneSample(vector<int> sp_indeces, bool sym_factor,
 
 }
 
+void DeterministicDiagram::FindIndependentIndices() {
+
+    int nlines = lines.size();
+    int nvertices = v_with_lines.size();
+
+}
+
 void DeterministicDiagram::Cleanup() {
     this->LabeledDiagram::Cleanup();
     spbasis = nullptr;
+    comp_vertices_ready = false;
     computable_vertices.clear();
 }
 

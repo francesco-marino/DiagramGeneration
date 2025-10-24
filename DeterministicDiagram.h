@@ -54,6 +54,8 @@ class DeterministicDiagram : public LabeledDiagram {
 
         Num Compute();
 
+        virtual void Process() override;
+
         virtual void Cleanup() override;
 
     protected:
@@ -65,10 +67,14 @@ class DeterministicDiagram : public LabeledDiagram {
 
         bool AreThereEquivalentIndeces(const vector<int> indeces) const;
 
+        virtual void FindIndependentIndices();
+
     private:
         int nstates, nholes;
         vector<int> p_range, h_range;
 
+        bool comp_vertices_ready;
+        void PrepareComputableVertices();
 };
 
 
