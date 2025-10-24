@@ -94,6 +94,7 @@ void LabeledDiagram::Process() {
     this->AssignNamesToLines();
     this->nloops = this->CountLoops();
     this->symmetry_factor = this->FindSymmetryFactor();
+    this->equivalent_lines = this->FindEquivalentLines();
 }
 
 string LabeledDiagram::GetInternalLinesString() const {
@@ -270,6 +271,29 @@ int LabeledDiagram::CountLoops() const {
                         ++nloops;
                         break;
                     } 
+
+                    for (int il5=0; il5<nlines; ++il5) {
+                        if ( lines_visited[il1] ) continue;
+                        if ( lines_visited[il2] ) continue;
+                        if ( lines_visited[il3] ) continue;
+                        if ( lines_visited[il4] ) continue;
+                        if ( lines_visited[il5] ) continue;
+
+                        int vin5  = lines[il5]->getInIndex();
+                        int vout5 = lines[il5]->getOutIndex();
+                        if (vin5 != vout4) continue;
+
+                        if (vout5==vin1) {
+                            lines_visited[il1] = true;
+                            lines_visited[il2] = true;
+                            lines_visited[il3] = true;
+                            lines_visited[il4] = true;
+                            lines_visited[il5] = true;
+
+                            ++nloops;
+                            break;
+                        }
+                    }
                 }
             }
 
@@ -305,6 +329,31 @@ void LabeledDiagram::GetNumberOfPhLines(int &nh, int &np) const {
     return;
 }
 
+vector< vector<int> > LabeledDiagram::FindEquivalentLines() {
+    
+    vector< vector<int> > equivs;
+    int nlines = lines.size();
+
+    for (int i1=0; i1<nlines; ++i1) {
+        for (int i2=i1+1; i2<nlines; ++i2) {
+            if ( lines[i1]->getOutIndex() != lines[i2]->getOutIndex()) continue;
+            if ( lines[i1]->getInIndex()  != lines[i2]->getInIndex())  continue;
+
+            // TODO HERE Extend to 3n interactions
+            equivs.push_back( vector<int>({i1, i2}) );
+
+            for (int i3=i2+1; i3<nlines; ++i3) {
+                if ( lines[i1]->getOutIndex() != lines[i3]->getOutIndex()) continue;
+                if ( lines[i1]->getInIndex()  != lines[i3]->getInIndex())  continue;
+                equivs.push_back( vector<int>({i1, i2, i3}) );
+            }
+        } 
+    }
+    return equivs;
+
+}
+
+
 void LabeledDiagram::PrintLines() const {
     int n_lines = GetNumberOfLines();
     cout << "There are " << n_lines << " lines in the diagram" << endl;
@@ -318,6 +367,7 @@ void LabeledDiagram::Cleanup() {
     lines.clear();
     v_with_lines.clear();
     energy_denoms.clear();
+    equivalent_lines.clear();
     n_particle_lines = 0;
     n_hole_lines = 0;
 }

@@ -84,6 +84,7 @@ int main() {
         cout << "Numerical : " << e2 << "  " << ehf+e2 << endl;
         cout << "E3 : " << e3 << "  " << e2+e3 << endl;
 
+        double tstart = Clock();
         MbptDiagramManager mbpt;
         mbpt.SetMbptOrder(4);
         mbpt.Build();
@@ -93,9 +94,11 @@ int main() {
         double sum = 0.;
         for (int i=0; i<results.size(); ++i) {
             sum += results[i];
-            cout << "Diagram " << i << " contribution: " << results[i] << endl;
+            //cout << "Diagram " << i << " contribution: " << results[i] << endl;
         }
-        cout << "Total contribution from MBPT diagrams at order 3: " << sum << endl;
+        cout << "Total contribution from MBPT diagrams at order 4: " << sum << endl;
+        double tend = Clock();
+        cout << "Time taken for evaluation: " << tend - tstart << " seconds." << endl;
 
         unique_ptr<Diagram> & diag = mbpt.GetDiagram(0);
         MbptDiagram mbpt_diag(diag->GetAdjacencyMatrix(), diag->GetVertices());

@@ -60,6 +60,7 @@ class LabeledDiagram: public Diagram {
         vector< unique_ptr<Line> > lines;
         vector< unique_ptr<VertexWithLine> > v_with_lines;
         vector< unique_ptr<VertexWithLine> > energy_denoms;
+        vector< vector<int> > equivalent_lines;
 
         int n_particle_lines, n_hole_lines;
 
@@ -71,6 +72,8 @@ class LabeledDiagram: public Diagram {
         virtual void FindLineType() = 0;
         virtual void AssignNamesToLines() = 0;
         virtual void FindDiagramExpression() = 0;
+
+        vector< vector<int> > FindEquivalentLines();
 
     private:
 };

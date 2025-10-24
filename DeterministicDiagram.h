@@ -23,6 +23,9 @@ class ComputableVertex : public VertexWithLine {
         void SetSpBasis(const shared_ptr<SpBasis> &spbasis_in) { InitBasis(spbasis_in); }
         bool IsBasisSet() const { return (spbasis!=nullptr); }
 
+        bool CheckNonZero(vector<int> indeces) const;
+        virtual bool CheckNonZero(vector<int> bra, vector<int> ket) const;
+
         Num Evaluate(vector<int> indeces) const;
         virtual Num Evaluate(vector<int> bra, vector<int> ket) const;
 
@@ -59,6 +62,8 @@ class DeterministicDiagram : public LabeledDiagram {
 
         Num EvalOneSample(vector<int> sp_indeces, bool sym_factor=true, bool permute=false) const;
         virtual void Init(const shared_ptr<SpBasis> &spbasis_in);
+
+        bool AreThereEquivalentIndeces(const vector<int> indeces) const;
 
     private:
         int nstates, nholes;

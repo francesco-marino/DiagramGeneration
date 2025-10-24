@@ -40,6 +40,28 @@ void ComputableVertex::Cleanup() {
     spbasis = nullptr;
 }
 
+bool ComputableVertex::CheckNonZero(vector<int> indeces) const {
+    vector<int> bra, ket;
+    for (const auto ll : GetOutLineIndeces() ) bra.push_back( indeces[ll] );
+    for (const auto ll : GetInLineIndeces() )  ket.push_back( indeces[ll] );
+    return CheckNonZero(bra, ket);
+}
+
+bool ComputableVertex::CheckNonZero(vector<int> bra, vector<int> ket) const {
+    bool tmp = true;
+    int nbra = this->GetNout();
+    int nket = this->GetNin();
+    if (bra.size()!=nbra || ket.size()!=nket) return false;
+
+    if (nbra==2 && nket==2) {
+        tmp = spbasis->CheckNonZero(bra[0], bra[1], ket[0], ket[1]);
+    }
+    else if (nbra==1 && nket==1) {
+        tmp = spbasis->CheckNonZero(bra[0], ket[0]);
+    }
+    return tmp;
+}
+
 Num ComputableVertex::Evaluate(vector<int> indeces) const {
     if ( indeces.size()!=Nout+Nin ) return 0.;
     vector<int> bra(indeces.begin(), indeces.begin()+Nout);
@@ -139,10 +161,15 @@ Num DeterministicDiagram::Compute() {
     while( indices[nlines]==0 ) {
 
         vector<int> slice(indices.begin(), indices.begin() + nlines);
-        Num tmp = EvalOneSample(slice, true, false);
-        result += tmp;
 
-        //for (auto val : slice) { cout << val << " "; }  cout << endl;
+        bool non_zero = true;
+        non_zero = non_zero && !AreThereEquivalentIndeces(slice);
+        if (non_zero) { for (const auto& vert : computable_vertices) { if (!vert->CheckNonZero(slice)) { non_zero = false; break; } } }
+
+        if ( non_zero ) {
+            Num tmp = EvalOneSample(slice, true, false);
+            result += tmp;
+        }
 
         indices[0]++;
         while ( indices[p]==ends[p] ) {
@@ -159,6 +186,29 @@ Num DeterministicDiagram::Compute() {
     return result;
 }
 
+//
+// Find if there are (equivalent) lines with same index assigned. This implies, for antisymmetric tensors,
+// that the result is zero.
+//
+bool DeterministicDiagram::AreThereEquivalentIndeces(const vector<int> indeces_in) const {
+    bool identical_inds = false;
+    if ( equivalent_lines.size()<=0 ) return false;
+
+    for (const auto& group : this->equivalent_lines) {
+        int l1, l2, l3;
+        if ( group.size()<2 ) continue;
+        l1 = group[0]; l2 = group[1];
+
+        if (2==group.size()) {
+            if (indeces_in[l1]==indeces_in[l2]) { identical_inds = true; break; }
+        }
+        else if ( 3==group.size() ) { 
+            l3 = group[2]; 
+            if (indeces_in[l1]==indeces_in[l2] || indeces_in[l1]==indeces_in[l3]) { identical_inds = true; break; }
+        }
+    }
+    return identical_inds;
+}
 
 
 Num DeterministicDiagram::EvalOneSample(vector<int> sp_indeces, bool sym_factor, bool permute) const {
@@ -166,6 +216,8 @@ Num DeterministicDiagram::EvalOneSample(vector<int> sp_indeces, bool sym_factor,
     Num result = 1.;
     int nlines = lines.size();
     int nvertices = v_with_lines.size();
+
+    for (const auto& vert : computable_vertices) { if (!vert->CheckNonZero(sp_indeces)) return 0.; }
 
     // The value of a diagram is given by the product of its vertices,
     // multiplied by a symmetry factor, a global sign, and (possibly)
@@ -202,8 +254,8 @@ Num DeterministicDiagram::EvalOneSample(vector<int> sp_indeces, bool sym_factor,
 
     if (sym_factor) {
         result /= static_cast<double>(this->symmetry_factor);
-    }
-    result *= std::pow(-1, GetNumberOfHoleLines()-this->nloops );
+    }   
+    result *= std::pow(-1, GetNumberOfHoleLines()-this->nloops );   // Sign
 
     return result;
 
@@ -238,14 +290,22 @@ void DeterministicDiagramManager::Cleanup() {
 }
 
 vector<Num> DeterministicDiagramManager::Compute() {
-    vector<Num> results;
-    for (auto& diag : diagrams) {
-        DeterministicDiagram* det_diag = dynamic_cast<DeterministicDiagram*>(diag.get());
+
+    int ndiags = diagrams.size();
+    if (ndiags==0) return vector<Num>();
+
+    vector<Num> results(ndiags, 0.);
+    
+    // Parallelize
+    for (int ii=rank; ii<ndiags; ii+=ntasks) {
+        DeterministicDiagram* det_diag = dynamic_cast<DeterministicDiagram*>(diagrams[ii].get());
         if (det_diag) {
             Num res = det_diag->Compute();
-            results.push_back(res);
+            results[ii] = res;
         }
     }
+
+    MPI_Allreduce(MPI_IN_PLACE, results.data(), ndiags, MPI_NUM_TYPE, MPI_SUM, MPI_COMM_WORLD);
+
     return results;
-    // Process results as needed
 }

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <memory>
+#include <mpi.h>
 #include <string>
 #include <vector>
 
@@ -8,6 +9,7 @@ using std::vector;
 using std::string;
 
 typedef double Num;
+const MPI_Datatype MPI_NUM_TYPE = MPI_DOUBLE;
 
 class SpBasis {
 
