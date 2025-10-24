@@ -100,12 +100,13 @@ int main() {
         double tend = Clock();
         cout << "Time taken for evaluation: " << tend - tstart << " seconds." << endl;
 
-        unique_ptr<Diagram> & diag = mbpt.GetDiagram(0);
+        unique_ptr<Diagram> & diag = mbpt.GetDiagram(15);
         MbptDiagram mbpt_diag(diag->GetAdjacencyMatrix(), diag->GetVertices());
         mbpt_diag.SetSpBasis( basePtr );
         mbpt_diag.Build();
         mbpt_diag.Process();
         double res = mbpt_diag.Compute();
+        cout << mbpt_diag.GetDiagramLatexExpression() << endl;
         //cout << "Result : " << res << endl;
 
     }

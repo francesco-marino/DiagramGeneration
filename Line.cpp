@@ -52,6 +52,12 @@ int Line::GetSpIndex() const {
     return tmp;
 }
 
+void Line::SetDependencies(bool free_in, const vector<int>& deps) {
+    is_free = free_in;
+    for (const int dd : deps) dependencies.push_back(dd);
+}
+
+
 void Line::Print() const {
     cout << GetString() << endl;
 }
@@ -79,4 +85,6 @@ void Line::Cleanup() {
     Vout_index  = -1;
     sp_index_set = false;
     sp_index = -1;
+    dependencies.clear();
+    is_free = false;
 }

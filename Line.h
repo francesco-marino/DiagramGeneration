@@ -2,12 +2,14 @@
 
 #include <memory>
 #include <string>
+#include <vector>
 
 #include "Vertex.h"
 
 using std::unique_ptr;
 using std::make_unique;
 using std::string;
+using std::vector;
 
 class Line {
     public:
@@ -38,6 +40,9 @@ class Line {
         void SetSpIndex(int isp) { sp_index=isp; sp_index_set=true; }
         int GetSpIndex() const;
 
+        bool IsFreeIndex() const { return is_free; }
+        void SetDependencies(bool free_in, const vector<int>& deps);
+
     protected:
     
         unique_ptr<Vertex> Vin, Vout;
@@ -52,6 +57,8 @@ class Line {
 
         int sp_index;
         bool sp_index_set;
+        bool is_free;   // Free index or constrained to other indeces
+        vector<int> dependencies;
 
         void AssignVertices(const Vertex& Vin, const Vertex& Vout);
         void AssignVertices(const unique_ptr<Vertex>& Vin, const unique_ptr<Vertex>& Vout);

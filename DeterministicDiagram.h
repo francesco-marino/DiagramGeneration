@@ -29,6 +29,8 @@ class ComputableVertex : public VertexWithLine {
         Num Evaluate(vector<int> indeces) const;
         virtual Num Evaluate(vector<int> bra, vector<int> ket) const;
 
+        vector<int> GetLineIndecesWithConstraint(int constr_line, const vector<unique_ptr<Line>> &lines);
+
         virtual void Cleanup() override;
 
     protected:

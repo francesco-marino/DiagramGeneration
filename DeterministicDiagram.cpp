@@ -1,5 +1,6 @@
 
-#include  <iostream>
+#include <iostream>
+#include <map>
 
 #include "DeterministicDiagram.h"
 
@@ -26,6 +27,38 @@ void ComputableVertex::BuildFromVertex(const unique_ptr<VertexWithLine>& base) {
     this->Nout = out_line_ind.size();
 
     return;
+}
+
+vector<int> ComputableVertex::GetLineIndecesWithConstraint(int constr_line, const vector<unique_ptr<Line>> &lines) {
+    bool is_out_line = true;
+    vector<int> all_lines;
+    vector<bool> inout_lines;
+
+    // First check if the constrained line is in/out.
+    all_lines = this->GetLineIndeces(lines, inout_lines);
+    for (int ii=0; ii<all_lines.size(); ++ii) {
+        if (all_lines[ii]==constr_line) {
+            is_out_line = inout_lines[ii];
+            break;
+        }
+    }
+
+    // We sort the lines so that:
+    // if the constrined line is OUTgoing, we first list incoming lines, then outgoing ones;
+    // if the constrined line is INcoming, outgoing lines are inserted first.
+    // The constrained line comes last.
+    vector<int> sorted_lines;
+    if (is_out_line) {
+        for (int ii : in_line_ind)  sorted_lines.push_back(ii);
+        for (int oo : out_line_ind) sorted_lines.push_back(oo);
+    }
+    else {
+        for (int oo : out_line_ind) sorted_lines.push_back(oo);
+        for (int ii : in_line_ind)  sorted_lines.push_back(ii);
+    }
+    sorted_lines.push_back(constr_line);
+
+    return sorted_lines;
 }
 
 
@@ -95,8 +128,7 @@ std::vector<int> range(int start, int end, int step = 1) {
     return result;
 }
 
-DeterministicDiagram::DeterministicDiagram() {
-    Diagram();
+DeterministicDiagram::DeterministicDiagram() : LabeledDiagram() {
 }
 
 DeterministicDiagram::DeterministicDiagram(const IntMat& mat) : LabeledDiagram(mat) { 
@@ -118,6 +150,7 @@ void DeterministicDiagram::Init(const shared_ptr<SpBasis> &spbasis_in) {
 
 }
 
+// TODO HERE This tourine is not working but i don't get why
 void DeterministicDiagram::PrepareComputableVertices() {
     int nvertices = v_with_lines.size();
     for (int iv=0; iv<nvertices; ++iv) {
@@ -132,12 +165,13 @@ void DeterministicDiagram::PrepareComputableVertices() {
 
 void DeterministicDiagram::Process() {
     LabeledDiagram::Process();
+    this->FindIndependentIndices();
 }
 
 Num DeterministicDiagram::Compute() {
 
     if (!IsBuilt()) return -1;
-    // if (!comp_vertices_ready) this->PrepareComputableVertices();
+    //this->PrepareComputableVertices();
 
     int nlines = lines.size();
     int nvertices = v_with_lines.size();
@@ -154,7 +188,6 @@ Num DeterministicDiagram::Compute() {
         vert->SetSpBasis( spbasis );
         computable_vertices.push_back( std::move(vert) );
     }
-
 
     for (int il=0; il<nlines; ++il) {
 
@@ -283,7 +316,50 @@ void DeterministicDiagram::FindIndependentIndices() {
     int nlines = lines.size();
     int nvertices = v_with_lines.size();
 
+    vector<bool> free_index(nlines, true);
+    vector<int>  constr_index;
+    vector<bool> constr_inout;
+
+    // Iterate over all the vertices. For each vertex, one line must be constrained.
+    // We simply constrain the first available.
+    for (int iv=0; iv<nvertices-1; ++iv) {
+        auto &vert = v_with_lines[iv];
+        vector<bool> in_out;
+        vector<int> lines_from_v = vert->GetLineIndeces(this->lines, in_out);
+        int Nl = lines_from_v.size();
+        int il = Nl-1;
+        int line_now;
+
+        while (il>=0) {
+            line_now = lines_from_v[il];
+            if ( free_index[line_now] ) { 
+                free_index[line_now] = false; 
+                break; 
+            }
+            --il;
+        }
+        // cout << "Vertex " << iv << "   Line " << line_now << "  " << lines[line_now]->GetLineName() << endl;
+        constr_index.push_back(line_now);
+
+    }
+    constr_index.push_back(-1); // The last vertex is not constrained
+
+    int nconstr = 0;
+    for (bool bb : free_index) if (!bb) ++nconstr;
+    if (nconstr!=nvertices-1) {
+        cout << "Error! I have " << nconstr << " constrained indices " << endl;
+    }
+
+    for (int iv=0; iv<nvertices-1; ++iv) {
+        int constr_ind = constr_index[iv];
+        if (constr_ind<0) continue;
+    
+        auto &vert = v_with_lines[iv];
+        vector<int> lines_from_v = vert->GetLineIndecesWithConstraint(constr_ind, this->vertices);
+    }
+
 }
+
 
 void DeterministicDiagram::Cleanup() {
     this->LabeledDiagram::Cleanup();

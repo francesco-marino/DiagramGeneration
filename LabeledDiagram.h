@@ -22,7 +22,7 @@ class VertexWithLine : public Vertex {
 
         vector<int> GetOutLineIndeces() const { return out_line_ind; }
         vector<int> GetInLineIndeces() const  { return in_line_ind; }
-        vector<int> GetLineIndeces() const;
+        vector<int> GetLineIndeces(const vector<unique_ptr<Line>> &lines, vector<bool> &in_out) const;
 
         virtual string GetTensorName(const vector<unique_ptr<Line>> &lines) const;
 
@@ -52,7 +52,7 @@ class LabeledDiagram: public Diagram {
         virtual bool CanGenerateLatexExpr() const { return true; }
         virtual string GetDiagramLatexExpression(bool show_ext=false) const;
 
-        virtual void Cleanup();
+        virtual void Cleanup() override;
         int GetNumberOfLines() const;
         int GetNumberOfHoleLines() const;
         void GetNumberOfPhLines(int &nh, int &np) const;

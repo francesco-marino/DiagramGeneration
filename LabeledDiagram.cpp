@@ -53,10 +53,34 @@ string VertexWithLine::ListInIndeces(const vector<unique_ptr<Line>> &lines) cons
     return tmp;
 }
 
-vector<int> VertexWithLine::GetLineIndeces() const {
+
+
+vector<int> VertexWithLine::GetLineIndeces(const vector<unique_ptr<Line>> &lines, vector<bool> &in_out) const {
     vector<int> lines_out;
-    for (int ll : out_line_ind) { lines_out.push_back(ll); }
-    for (int ll : in_line_ind)  { lines_out.push_back(ll); }
+    in_out.clear();
+
+    for (int ll : out_line_ind) { lines_out.push_back(ll);  in_out.push_back(true);  }
+    for (int ll : in_line_ind)  { lines_out.push_back(ll);  in_out.push_back(false); }
+
+    /*
+    // Hole lines come first
+    auto comp = [&lines, &lines_out](int i1, int i2) {
+        const int line1 = lines_out[i1];
+        const int line2 = lines_out[i2];
+
+        const auto& name1 = lines[line1]->GetLineName();
+        const auto& name2 = lines[line2]->GetLineName();
+
+        // Define ordering: "h" comes before "p"
+        if (name1 == "h" && name2 == "p") return true;
+        if (name1 == "p" && name2 == "h") return false;
+
+        // Otherwise, compare by numeric order
+        return line1 < line2;
+    };
+    */
+    //std::sort(lines_out.begin(), lines_out.end(), comp);
+    std::sort(lines_out.begin(), lines_out.end());
     return lines_out;
 }
 
@@ -80,8 +104,7 @@ void VertexWithLine::Cleanup() {
 }
 
 
-LabeledDiagram::LabeledDiagram() {
-    Diagram();
+LabeledDiagram::LabeledDiagram() : Diagram() {
 }
 
 LabeledDiagram::LabeledDiagram(const IntMat& mat) : Diagram(mat) { 
